@@ -3,12 +3,12 @@ entries:
   myapp-chart:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-11-12T16:56:08.744755+05:30"
+    created: "2024-11-12T17:01:22.834428+05:30"
     description: A Helm chart for Kubernetes
     digest: b00762960cff1cd69122e6cb42b680ac9aebd739fcebfc5543c951d342d3da8c
     name: myapp-chart
     type: application
     urls:
-    - https://aditya5573.github.io/demo/myapp-chart-0.1.0.tgz
+    - https://github.com/aditya5573/demo/blob/main/index.yaml/myapp-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-12T16:56:08.743377+05:30"
+generated: "2024-11-12T17:01:22.832938+05:30"
