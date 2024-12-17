@@ -3,6 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        .folder-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .folder { text-align: center; width: 200px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+        .folder img { width: 50px; }
+        a { text-decoration: none; color: #333; }
+        p { font-size: 0.9em; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>Available Courses</h1>
+    <div class="folder-container" id="folders">
+        <!-- Folders will be dynamically populated -->
+    </div>
+
+    <script>
+        const repo = 'https://api.github.com/repos/your-username/demo1/contents/';
+
+        async function fetchFolders() {
+            const response = await fetch(repo);
+            const folders = await response.json();
+            const container = document.getElementById('folders');
+
+            for (let folder of folders) {
+                if (folder.type === 'dir') {
+                    const readmeUrl = `${repo}${folder.name}/README.md`;
+                    const description = await fetchDescription(readmeUrl);
+
+                    const folderDiv = document.createElement('div');
+                    folderDiv.className = 'folder';
+                    folderDiv.innerHTML = `
+                        <a href="view.html?folder=${folder.name}">
+                            <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="Folder">
+                            <h3>${folder.name}</h3>
+                            <p>${description}</p>
+                        </a>
+                    `;
+                    container.appendChild(folderDiv);
+                }
+            }
+        }
+
+        async function fetchDescription(url) {
+            try {
+                const response = await fetch(url, { headers: { Accept: 'application/vnd.github.v3.raw' } });
+                const text = await response.text();
+                const descriptionMatch = text.match(/## Description\s([\s\S]*?)\n\n/);
+                return descriptionMatch ? descriptionMatch[1].split(' ').slice(0, 15).join(' ') + '...' : 'No description available.';
+            } catch {
+                return 'No description available.';
+            }
+        }
+
+        fetchFolders();
+    </script>
+</body>
+</html>
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Courses</title>
     <style>
         body {
@@ -118,7 +187,10 @@
         fetchFolders();
     </script>
 </body>
-</html>
+</html> -->
+
+
+
 
 
 
