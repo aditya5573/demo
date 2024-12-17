@@ -3,81 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Portal</title>
+    <title>Available Courses</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f9f9f9;
         }
-        h1, h2 {
-            margin-bottom: 10px;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
         }
-        .folder-container {
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            padding: 10px;
+        .course-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .folder-card {
+            width: 200px;
             background-color: #fff;
-            box-shadow: 2px 2px 6px #ccc;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .folder-link {
-            text-decoration: none;
+        .folder-card:hover {
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .folder-icon {
+            font-size: 50px;
             color: #2a7ae2;
-            font-weight: bold;
         }
-        .description {
-            margin-top: 5px;
-            color: #555;
+        .folder-name {
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+        .folder-description {
             font-size: 0.9em;
+            color: #555;
+            margin: 5px 0;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
 </head>
 <body>
-    <h1>Course Portal</h1>
-    <div id="folder-list"></div>
+    <h1>Available Courses</h1>
+    <div class="course-container" id="course-list"></div>
 
     <script>
-        const folders = [
-            { name: "Folder 1", path: "folder1/README.md" },
-            { name: "Folder 2", path: "folder2/README.md" },
-            // Add more folders as needed
-        ];
+        const repoUrl = "https://api.github.com/repos/{username}/demo1/contents/"; // Replace {username} with your GitHub username
+        const courseList = document.getElementById("course-list");
 
-        const folderList = document.getElementById("folder-list");
+        // Fetch folders and README content
+        async function fetchCourses() {
+            try {
+                const response = await fetch(repoUrl);
+                const data = await response.json();
 
-        // Function to fetch README.md content
-        async function fetchReadme(path) {
-            const response = await fetch(path);
-            if (response.ok) {
-                const text = await response.text();
-                const words = text.split(/\s+/).slice(0, 10).join(" "); // Get first 10 words
-                return words;
-            }
-            return "No description available.";
-        }
-
-        // Render folders dynamically
-        async function renderFolders() {
-            for (const folder of folders) {
-                const description = await fetchReadme(folder.path);
-
-                const folderContainer = document.createElement("div");
-                folderContainer.className = "folder-container";
-
-                folderContainer.innerHTML = `
-                    <a href="view.html?folder=${encodeURIComponent(folder.name)}&path=${encodeURIComponent(folder.path)}" 
-                       class="folder-link">${folder.name}</a>
-                    <div class="description">${description}</div>
-                `;
-
-                folderList.appendChild(folderContainer);
+                for (const item of data) {
+                    if (item.type === "dir") {
+                        const readmeUrl = `${repoUrl}${item.name}/README.md`;
+                        const folderName = item.name;
+                        const description = await fetchReadme(readmeUrl);
+                        renderFolder(folderName, description, readmeUrl);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching folders:", error);
             }
         }
 
-        renderFolders();
+        // Fetch 15 words from README.md
+        async function fetchReadme(readmePath) {
+            try {
+                const response = await fetch(readmePath, {
+                    headers: { Accept: "application/vnd.github.v3.raw" }
+                });
+                if (response.ok) {
+                    const text = await response.text();
+                    const words = text.split(/\s+/).slice(0, 15).join(" "); // First 15 words
+                    return words;
+                }
+                return "Description not available.";
+            } catch {
+                return "Description not available.";
+            }
+        }
+
+        // Render folder card dynamically
+        function renderFolder(name, description, readmeUrl) {
+            const folderCard = document.createElement("a");
+            folderCard.href = `view.html?folder=${encodeURIComponent(name)}&readme=${encodeURIComponent(readmeUrl)}`;
+            folderCard.innerHTML = `
+                <div class="folder-card">
+                    <div class="folder-icon">&#128193;</div>
+                    <div class="folder-name">${name}</div>
+                    <div class="folder-description">${description}</div>
+                </div>
+            `;
+            courseList.appendChild(folderCard);
+        }
+
+        fetchCourses();
     </script>
 </body>
 </html>
+
 
 
 
