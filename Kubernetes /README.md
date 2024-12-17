@@ -1,5 +1,3 @@
-## Description
-
 Join our hands-on Kubernetes workshop to learn container orchestration, scaling, and management of applications in cloud environments. Gain practical skills in deploying and managing microservices with Kubernetes, covering everything from basic concepts to advanced deployment strategies. Perfect for developers, DevOps engineers, and IT professionals.
 
 ## Simple pod imperative way
