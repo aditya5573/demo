@@ -3,6 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            margin-bottom: 10px;
+        }
+        .folder-container {
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 2px 2px 6px #ccc;
+        }
+        .folder-link {
+            text-decoration: none;
+            color: #2a7ae2;
+            font-weight: bold;
+        }
+        .description {
+            margin-top: 5px;
+            color: #555;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Course Portal</h1>
+    <div id="folder-list"></div>
+
+    <script>
+        const folders = [
+            { name: "Folder 1", path: "folder1/README.md" },
+            { name: "Folder 2", path: "folder2/README.md" },
+            // Add more folders as needed
+        ];
+
+        const folderList = document.getElementById("folder-list");
+
+        // Function to fetch README.md content
+        async function fetchReadme(path) {
+            const response = await fetch(path);
+            if (response.ok) {
+                const text = await response.text();
+                const words = text.split(/\s+/).slice(0, 10).join(" "); // Get first 10 words
+                return words;
+            }
+            return "No description available.";
+        }
+
+        // Render folders dynamically
+        async function renderFolders() {
+            for (const folder of folders) {
+                const description = await fetchReadme(folder.path);
+
+                const folderContainer = document.createElement("div");
+                folderContainer.className = "folder-container";
+
+                folderContainer.innerHTML = `
+                    <a href="view.html?folder=${encodeURIComponent(folder.name)}&path=${encodeURIComponent(folder.path)}" 
+                       class="folder-link">${folder.name}</a>
+                    <div class="description">${description}</div>
+                `;
+
+                folderList.appendChild(folderContainer);
+            }
+        }
+
+        renderFolders();
+    </script>
+</body>
+</html>
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Dashboard</title>
     <style>
         body {
@@ -72,6 +156,7 @@
         <h2>Available Courses</h2>
         <div id="course-grid" class="course-grid">
             <!-- Course cards will be dynamically inserted here -->
+<!--
         </div>
         <div id="content">
             <h3 id="course-title">Select a course</h3>
@@ -143,3 +228,4 @@
     </script>
 </body>
 </html>
+ -->
