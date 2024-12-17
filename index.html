@@ -87,7 +87,7 @@
         async function fetchDescription(folderName) {
             const readmeUrl = `${apiUrl}${folderName}/README.md`;
             try {
-                const response = await fetch(readmeUrl, { headers: { Accept: "application/vnd.github.raw" } });
+                const response = await fetch(readmeUrl, { Accept: "application/vnd.github.raw" });
                 if (response.ok) {
                     const text = await response.text();
                     const words = text.split(/\s+/).slice(0, 15).join(" ");
