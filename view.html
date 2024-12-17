@@ -3,49 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Details</title>
+    <title>README Viewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f9f9f9;
         }
-        h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
+        .header {
+            font-size: 1.8em;
+            font-weight: bold;
             border-bottom: 2px solid #2a7ae2;
-            padding-bottom: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #333;
         }
         .content {
             white-space: pre-wrap;
+            line-height: 1.5;
             background-color: #fff;
             padding: 20px;
             border: 1px solid #ddd;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
+            box-shadow: 2px 2px 6px #ccc;
         }
     </style>
 </head>
 <body>
-    <h1 id="folder-name"></h1>
+    <div class="header" id="folder-name"></div>
     <div class="content" id="readme-content">Loading...</div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const folderName = urlParams.get("folder");
-        const readmeUrl = urlParams.get("readme");
+        const readmePath = urlParams.get("readme");
+        const apiRawUrl = `https://raw.githubusercontent.com/aditya5573/demo1/main/${readmePath}`;
 
         document.getElementById("folder-name").innerText = folderName;
 
+        // Load README content
         async function loadReadme() {
-            try {
-                const response = await fetch(readmeUrl, {
-                    headers: { Accept: "application/vnd.github.v3.raw" }
-                });
-                const content = await response.ok ? await response.text() : "README.md not found!";
+            const response = await fetch(apiRawUrl);
+            if (response.ok) {
+                const content = await response.text();
                 document.getElementById("readme-content").innerText = content;
-            } catch (error) {
-                document.getElementById("readme-content").innerText = "Error loading README.md!";
+            } else {
+                document.getElementById("readme-content").innerText = "README.md not found!";
             }
         }
 
