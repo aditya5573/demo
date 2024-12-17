@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.folder-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.folder {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.folder:hover {
+    background-color: #f0f0f0;
+}
+
+.folder h2 {
+    margin: 0 0 10px;
+    color: #007bff;
+}
+
+.folder p {
+    margin: 0;
+    color: #666;
+}
+
+.content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
