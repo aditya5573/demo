@@ -3,60 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Details</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-transform: capitalize; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
-        .content { margin-top: 20px; line-height: 1.6; }
-        h2 { color: #2c3e50; }
-        pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; overflow-x: auto; }
-    </style>
-</head>
-<body>
-    <h1 id="folder-name"></h1>
-    <div class="content" id="readme-content">
-        <!-- README content will be loaded here -->
-    </div>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const folder = urlParams.get('folder');
-        const repo = `https://api.github.com/repos/your-username/demo1/contents/${folder}/README.md`;
-
-        document.getElementById('folder-name').innerText = folder;
-
-        async function fetchReadme() {
-            try {
-                const response = await fetch(repo, { headers: { Accept: 'application/vnd.github.v3.raw' } });
-                const text = await response.text();
-                const formattedContent = formatMarkdown(text);
-                document.getElementById('readme-content').innerHTML = formattedContent;
-            } catch {
-                document.getElementById('readme-content').innerText = 'Error loading content.';
-            }
-        }
-
-        function formatMarkdown(md) {
-            let html = md
-                .replace(/^## (.+)$/gm, '<h2>$1</h2>') // Format H2
-                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Format code blocks
-                .replace(/\n/g, '<br>'); // Line breaks
-            return html;
-        }
-
-        fetchReadme();
-    </script>
-</body>
-</html>
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>README Viewer</title>
     <style>
         body {
@@ -104,7 +50,6 @@
                 document.getElementById("readme-content").innerText = "README.md not found!";
             }
         }
- -->
         loadReadme();
     </script>
 </body>
