@@ -3,93 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Content</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #ab031d;
-            color: #fff;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-        }
-        header h1 {
-            margin: 0;
-        }
-        .container {
-            margin: 2rem auto;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 2rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            line-height: 1.6;
-        }
-        #folder-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1 id="folder-title">Loading...</h1>
-    </header>
-    <div class="container">
-        <div id="readme-content">Fetching content...</div>
-    </div>
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const folderName = params.get("folder");
-        const username = "aditya5573";
-        const repo = "demo";
-        const folderTitle = document.getElementById("folder-title");
-        const readmeContent = document.getElementById("readme-content");
-
-        folderTitle.textContent = folderName.replace(/-/g, " ").toUpperCase();
-
-        // Fetch README.md and render cleanly
-        async function fetchReadmeContent() {
-            const url = `https://raw.githubusercontent.com/${username}/${repo}/main/${folderName}/README.md`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error();
-                const content = await response.text();
-                readmeContent.innerHTML = content
-                    .replace(/##/g, "<h2>")
-                    .replace(/###/g, "<h3>")
-                    .replace(/`(.*?)`/g, "<code>$1</code>")
-                    .replace(/\n/g, "<br>");
-            } catch {
-                readmeContent.textContent = "README.md not found.";
-            }
-        }
-
-        fetchReadmeContent();
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Dashboard</title>
     <style>
         body {
@@ -159,7 +72,6 @@
         <h2>Available Courses</h2>
         <div id="course-grid" class="course-grid">
             <!-- Course cards will be dynamically inserted here -->
-  <!-- 
         </div>
         <div id="content">
             <h3 id="course-title">Select a course</h3>
@@ -230,4 +142,4 @@
         displayCourses();
     </script>
 </body>
-</html> -->
+</html>
