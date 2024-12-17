@@ -3,6 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Course Portal</h1>
+    <div id="folderList" class="folder-container">Loading folders...</div>
+
+    <script>
+        // Fetch folder data from server
+        fetch('/api/folders')
+            .then(response => response.json())
+            .then(data => {
+                const folderList = document.getElementById('folderList');
+                folderList.innerHTML = '';
+
+                data.forEach(folder => {
+                    const folderDiv = document.createElement('div');
+                    folderDiv.className = 'folder';
+                    folderDiv.innerHTML = `
+                        <h2>${folder.name}</h2>
+                        <p>${folder.description}</p>
+                    `;
+                    folderDiv.onclick = () => {
+                        window.location.href = `/view-readme.html?folder=${folder.name}`;
+                    };
+                    folderList.appendChild(folderDiv);
+                });
+            })
+            .catch(err => {
+                document.getElementById('folderList').innerText = 'Error loading folders.';
+            });
+    </script>
+</body>
+</html>
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Dashboard</title>
     <style>
         body {
@@ -142,127 +186,4 @@
         displayCourses();
     </script>
 </body>
-</html>
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #ab031d;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        h1 {
-            margin: 0;
-        }
-        .container {
-            margin: 2rem auto;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 1rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 1rem 0;
-                    }
-        a {
-            text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        #content {
-            margin-top: 2rem;
-            border-top: 1px solid #ccc;
-            padding-top: 1rem;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Course Portal</h1>
-    </header>
-    <div class="container">
-        <h2>Available Courses</h2>
-        <ul id="course-list">
-            <!-- Course links will be dynamically inserted here -->
-        </ul>
-<!--         <div id="content">
-            <h3>Course Content</h3>
-            <div id="readme-content">Select a course to load its README.md file.</div>
-        </div> -->
-    </div>
-        <script>
-        // Define your repo details
-        const username = "aditya5573"; // Your GitHub username
-        const repo = "demo1"; // Your repo name
-
-        // List of course folders (manually define them here)
-        const courseFolders = [
-            "chaos",
-            "container-and-kubernetes-security",
-            "kubernetes-101"
-            // Add other folders as needed
-        ];
-
-        const courseList = document.getElementById("course-list");
-        const readmeContent = document.getElementById("readme-content");
-
-        // Function to fetch README.md content
-        function fetchReadme(folder) {
-            const url = `https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/README.md`;
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("README.md not found");
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    readmeContent.textContent = data;
-                })
-                .catch(error => {
-                    readmeContent.textContent = "Error loading README.md: " + error.message;
-                });
-        }
-
-        // Dynamically add course links
-        courseFolders.forEach(folder => {
-            const listItem = document.createElement("li");
-            const link = document.createElement("a");
-            link.href = "#";
-            link.textContent = folder.replace(/-/g, " ").toUpperCase();
-            link.onclick = () => fetchReadme(folder);
-
-            listItem.appendChild(link);
-            courseList.appendChild(listItem);
-        });
-    </script>
-</body>
-</html>
- -->
+</html> -->
