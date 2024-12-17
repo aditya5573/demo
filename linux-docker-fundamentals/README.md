@@ -1,5 +1,3 @@
-## Description 
-
 Master Linux and Docker in this comprehensive workshop. Learn how to manage Linux systems, automate tasks, and build containerized applications using Docker. Gain hands-on experience with essential Linux commands, system administration, and Docker containerization to streamline development and deployment workflows. Ideal for developers, sysadmins, and IT professionals.
 
 ## PART ONE (one hour)
