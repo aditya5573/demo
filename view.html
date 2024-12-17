@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>README Viewer</title>
+    <title>Course Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,19 +11,18 @@
             background-color: #f9f9f9;
         }
         h1 {
+            font-size: 2em;
             margin-bottom: 20px;
-            font-size: 1.8em;
             border-bottom: 2px solid #2a7ae2;
-            display: inline-block;
             padding-bottom: 5px;
         }
         .content {
             white-space: pre-wrap;
-            margin-top: 20px;
-            padding: 10px;
             background-color: #fff;
+            padding: 20px;
             border: 1px solid #ddd;
-            box-shadow: 2px 2px 6px #ccc;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -34,14 +33,20 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const folderName = urlParams.get("folder");
-        const readmePath = urlParams.get("path");
+        const readmeUrl = urlParams.get("readme");
 
         document.getElementById("folder-name").innerText = folderName;
 
         async function loadReadme() {
-            const response = await fetch(readmePath);
-            const content = await response.ok ? await response.text() : "README.md not found!";
-            document.getElementById("readme-content").innerText = content;
+            try {
+                const response = await fetch(readmeUrl, {
+                    headers: { Accept: "application/vnd.github.v3.raw" }
+                });
+                const content = await response.ok ? await response.text() : "README.md not found!";
+                document.getElementById("readme-content").innerText = content;
+            } catch (error) {
+                document.getElementById("readme-content").innerText = "Error loading README.md!";
+            }
         }
 
         loadReadme();
