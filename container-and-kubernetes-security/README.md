@@ -1,5 +1,3 @@
-## Description
-
 Enhance your understanding of container and Kubernetes security in this in-depth workshop. Learn best practices for securing containerized applications, Kubernetes clusters, and CI/CD pipelines. Explore techniques for vulnerability scanning, access control, network security, and incident response to ensure robust security in cloud-native environments. Perfect for DevSecOps professionals and security-focused developers.
 
 ## Notes
