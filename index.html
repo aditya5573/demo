@@ -12,8 +12,9 @@
         }
         h1 {
             text-align: center;
-            color: #333;
             margin-bottom: 20px;
+            font-size: 2em;
+            color: #2a7ae2;
         }
         .course-container {
             display: flex;
@@ -21,32 +22,35 @@
             justify-content: center;
             gap: 20px;
         }
-        .folder-card {
-            width: 200px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        .course-card {
+            width: 220px;
             text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 2px 2px 6px #ccc;
             padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
+            transition: transform 0.2s;
         }
-        .folder-card:hover {
-            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 3px 3px 8px #bbb;
         }
         .folder-icon {
             font-size: 50px;
-            color: #2a7ae2;
+            color: #f0b400;
         }
-        .folder-name {
+        .course-title {
             font-weight: bold;
             margin: 10px 0;
             color: #333;
         }
-        .folder-description {
-            font-size: 0.9em;
+        .course-description {
             color: #555;
-            margin: 5px 0;
+            font-size: 0.9em;
+            height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         a {
             text-decoration: none;
@@ -56,67 +60,65 @@
 </head>
 <body>
     <h1>Available Courses</h1>
-    <div class="course-container" id="course-list"></div>
+    <div class="course-container" id="course-container"></div>
 
     <script>
-        const repoUrl = "https://api.github.com/repos/{username}/demo1/contents/"; // Replace {username} with your GitHub username
-        const courseList = document.getElementById("course-list");
+        const repoOwner = "aditya5573"; // Replace with your GitHub username
+        const repoName = "demo1"; // Replace with your GitHub repository name
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-        // Fetch folders and README content
-        async function fetchCourses() {
-            try {
-                const response = await fetch(repoUrl);
+        const courseContainer = document.getElementById("course-container");
+
+        // Fetch folders dynamically from GitHub repository
+        async function fetchFolders() {
+            const response = await fetch(apiUrl);
+            if (response.ok) {
                 const data = await response.json();
-
-                for (const item of data) {
-                    if (item.type === "dir") {
-                        const readmeUrl = `${repoUrl}${item.name}/README.md`;
-                        const folderName = item.name;
-                        const description = await fetchReadme(readmeUrl);
-                        renderFolder(folderName, description, readmeUrl);
-                    }
+                const folders = data.filter(item => item.type === "dir");
+                for (const folder of folders) {
+                    await addCourseCard(folder.name);
                 }
-            } catch (error) {
-                console.error("Error fetching folders:", error);
+            } else {
+                console.error("Failed to fetch folders:", response.statusText);
             }
         }
 
-        // Fetch 15 words from README.md
-        async function fetchReadme(readmePath) {
+        // Fetch README content and truncate to 15 words
+        async function fetchDescription(folderName) {
+            const readmeUrl = `${apiUrl}${folderName}/README.md`;
             try {
-                const response = await fetch(readmePath, {
-                    headers: { Accept: "application/vnd.github.v3.raw" }
-                });
+                const response = await fetch(readmeUrl, { headers: { Accept: "application/vnd.github.raw" } });
                 if (response.ok) {
                     const text = await response.text();
-                    const words = text.split(/\s+/).slice(0, 15).join(" "); // First 15 words
+                    const words = text.split(/\s+/).slice(0, 15).join(" ");
                     return words;
                 }
-                return "Description not available.";
-            } catch {
-                return "Description not available.";
+            } catch (error) {
+                console.error(`Error fetching README for ${folderName}:`, error);
             }
+            return "No description available.";
         }
 
-        // Render folder card dynamically
-        function renderFolder(name, description, readmeUrl) {
-            const folderCard = document.createElement("a");
-            folderCard.href = `view.html?folder=${encodeURIComponent(name)}&readme=${encodeURIComponent(readmeUrl)}`;
-            folderCard.innerHTML = `
-                <div class="folder-card">
-                    <div class="folder-icon">&#128193;</div>
-                    <div class="folder-name">${name}</div>
-                    <div class="folder-description">${description}</div>
-                </div>
+        // Add course card to the container
+        async function addCourseCard(folderName) {
+            const description = await fetchDescription(folderName);
+
+            const card = document.createElement("a");
+            card.href = `view.html?folder=${encodeURIComponent(folderName)}&readme=${encodeURIComponent(folderName + "/README.md")}`;
+            card.className = "course-card";
+
+            card.innerHTML = `
+                <div class="folder-icon">📁</div>
+                <div class="course-title">${folderName}</div>
+                <div class="course-description">${description}</div>
             `;
-            courseList.appendChild(folderCard);
+            courseContainer.appendChild(card);
         }
 
-        fetchCourses();
+        fetchFolders();
     </script>
 </body>
 </html>
-
 
 
 
