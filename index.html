@@ -323,6 +323,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Portal</title>
     <style>
+        /* Add your existing styles here */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -397,6 +398,22 @@
             text-decoration: none;
             font-weight: bold;
         }
+
+        .file-list {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        .file-list a {
+            display: block;
+            color: #0073e6;
+            text-decoration: none;
+            margin: 5px 0;
+        }
+
+        .file-list a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -409,57 +426,74 @@
     <div id="readmeContent" class="content" style="display: none;"></div>
 
     <script>
-        const courses = [
-            { name: "chaos", description: "Learn about chaos engineering and how to inject faults in a controlled way." },
-            { name: "container-and-kubernetes-security", description: "Enhance container and Kubernetes security with best practices." },
-            { name: "kubernetes-101", description: "Join our hands-on Kubernetes workshop to learn basic concepts and deployments." }
-        ];
+        const repoOwner = "aditya5573"; // Replace with your GitHub username
+        const repoName = "demo"; // Replace with your repository name
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
-        // Dynamically generate folder cards
-        function displayCourses() {
-            const container = document.getElementById("courseContainer");
-            container.innerHTML = "";
-
-            courses.forEach(course => {
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
-                folderDiv.innerHTML = `
-                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
-                    <h3>${course.name}</h3>
-                    <p>${truncateDescription(course.description, 15)}</p>
-                `;
-                folderDiv.onclick = () => loadReadme(course.name, course.description);
-                container.appendChild(folderDiv);
-            });
+        // Fetch the list of folders dynamically from GitHub
+        async function fetchFolders() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            return data.filter(item => item.type === "dir");
         }
 
-        // Truncate description to 15 words
-        function truncateDescription(desc, limit) {
-            return desc.split(" ").slice(0, limit).join(" ") + "...";
-        }
+        // Fetch folder contents and display on the portal
+        async function loadFolderContents(folderName) {
+            const folderUrl = `${apiUrl}/${folderName}`;
+            const response = await fetch(folderUrl);
+            const files = await response.json();
 
-        // Load README content for the selected course
-        function loadReadme(courseName, description) {
-            document.getElementById("courseContainer").style.display = "none";
+            const indexFile = files.find(file => file.name.toLowerCase() === "index.md");
+            const otherFiles = files.filter(file => file.name.endsWith(".md") && file.name.toLowerCase() !== "index.md");
+
             const readmeDiv = document.getElementById("readmeContent");
-            readmeDiv.style.display = "block";
             readmeDiv.innerHTML = `
                 <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
-                <h1>${courseName}</h1>
-                <h2>Description</h2>
-                <p>${description}</p>
-
+                <h1>${folderName}</h1>
+                ${indexFile ? `<h2>Index</h2><pre id="indexContent">Loading...</pre>` : ""}
+                <h2>Other Files</h2>
+                <div class="file-list">
+                    ${otherFiles.map(file => `<a href="${file.download_url}" target="_blank">${file.name}</a>`).join("")}
+                </div>
             `;
+
+            if (indexFile) {
+                const indexResponse = await fetch(indexFile.download_url);
+                const indexContent = await indexResponse.text();
+                document.getElementById("indexContent").textContent = indexContent;
+            }
+
+            document.getElementById("courseContainer").style.display = "none";
+            readmeDiv.style.display = "block";
         }
 
-        // Go back to folder view
+        // Go back to the folder view
         function goBack() {
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "flex";
         }
 
-        // Initialize
-        displayCourses();
+        // Display folder cards
+        async function displayFolders() {
+            const container = document.getElementById("courseContainer");
+            container.innerHTML = "Loading...";
+            const folders = await fetchFolders();
+            container.innerHTML = "";
+
+            folders.forEach(folder => {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                folderDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                    <h3>${folder.name}</h3>
+                `;
+                folderDiv.onclick = () => loadFolderContents(folder.name);
+                container.appendChild(folderDiv);
+            });
+        }
+
+        // Initialize the portal
+        displayFolders();
     </script>
 </body>
 </html>
