@@ -1,3 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .folder {
+            background-color: white;
+            border: 1px solid #ddd;
+            margin: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            cursor: pointer;
+        }
+
+        .folder img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .folder h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+        }
+
+        .folder p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #0073e6;
+            margin-top: 20px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            border-left: 3px solid #0073e6;
+            padding: 10px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .back {
+            margin-bottom: 20px;
+            display: inline-block;
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Course Portal</h1>
+    </header>
+
+    <div id="courseContainer" class="container"></div>
+
+    <div id="readmeContent" class="content" style="display: none;"></div>
+
+    <script>
+        const courses = [
+            { name: "chaos", readmePath: "chaos/README.md" },
+            { name: "container-and-kubernetes-security", readmePath: "container-and-kubernetes-security/README.md" },
+            { name: "kubernetes-101", readmePath: "kubernetes-101/README.md" }
+        ];
+
+        // Function to display folder cards
+        function displayCourses() {
+            const container = document.getElementById("courseContainer");
+            container.innerHTML = "";
+
+            courses.forEach(course => {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                folderDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                    <h3>${course.name}</h3>
+                `;
+                folderDiv.onclick = () => loadReadme(course.name, course.readmePath);
+                container.appendChild(folderDiv);
+            });
+        }
+
+        // Function to load and display the README.md file content
+        async function loadReadme(courseName, readmePath) {
+            document.getElementById("courseContainer").style.display = "none";
+            const readmeDiv = document.getElementById("readmeContent");
+            readmeDiv.style.display = "block";
+
+            try {
+                const response = await fetch(readmePath);
+                if (!response.ok) throw new Error("README file not found.");
+
+                const markdown = await response.text();
+
+                // Convert Markdown to HTML
+                const htmlContent = convertMarkdownToHTML(markdown);
+
+                // Display the content
+                readmeDiv.innerHTML = `
+                    <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
+                    <h1>${courseName}</h1>
+                    ${htmlContent}
+                `;
+            } catch (error) {
+                readmeDiv.innerHTML = `
+                    <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
+                    <h1>${courseName}</h1>
+                    <p style="color: red;">Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Simple Markdown to HTML Converter
+        function convertMarkdownToHTML(markdown) {
+            // Replace headers (## Header)
+            let html = markdown.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+            
+            // Replace bold (**text** or __text__)
+            html = html.replace(/\*\*(.*?)\*\*|__(.*?)__/gim, "<strong>$1$2</strong>");
+            
+            // Replace italics (*text* or _text_)
+            html = html.replace(/\*(.*?)\*|_(.*?)_/gim, "<em>$1$2</em>");
+            
+            // Replace code blocks (```)
+            html = html.replace(/```([\s\S]*?)```/gim, "<pre><code>$1</code></pre>");
+            
+            // Replace line breaks
+            html = html.replace(/\n/gim, "<br>");
+
+            return html;
+        }
+
+        // Go back to the folder view
+        function goBack() {
+            document.getElementById("readmeContent").style.display = "none";
+            document.getElementById("courseContainer").style.display = "flex";
+        }
+
+        // Initialize
+        displayCourses();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
 <!-- <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,7 +309,7 @@
 
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -277,7 +461,7 @@ kubectl get pods
         displayCourses();
     </script>
 </body>
-</html>
+</html> -->
 
 
 
