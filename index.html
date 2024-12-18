@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
+            line-height: 1.6;
         }
 
         header {
@@ -19,8 +20,9 @@
             text-align: center;
         }
 
-        h1, h2 {
+        h1 {
             margin: 0;
+            font-size: 24px;
         }
 
         .container {
@@ -52,42 +54,48 @@
         }
 
         .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .content h1 {
-            color: #0073e6;
-            margin-bottom: 20px;
+        .content h2, .content h3 {
+            color: #333;
         }
 
-        pre {
+        .content pre {
             background-color: #f4f4f4;
             border-left: 3px solid #0073e6;
-            padding: 10px;
+            padding: 15px;
             overflow-x: auto;
             font-family: 'Courier New', Courier, monospace;
-            text-align: center;
             white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
-        p, h2 {
-            margin: 10px 0;
+        .content code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 4px;
         }
 
-        .back {
-            margin-bottom: 20px;
+        .content ul, .content ol {
+            margin: 10px 0 20px 20px;
+        }
+
+        .content li {
+            margin-bottom: 10px;
+        }
+
+        a.back {
             display: inline-block;
+            margin: 20px 0;
             color: #0073e6;
             text-decoration: none;
             font-weight: bold;
         }
 
-        .back:hover {
+        a.back:hover {
             text-decoration: underline;
         }
     </style>
@@ -98,17 +106,17 @@
     </header>
 
     <div id="courseContainer" class="container"></div>
-
     <div id="readmeContent" class="content" style="display: none;"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         const courses = [
-            { name: "Set up a local Pyspark Environment with Jupyter on", readmePath: "chaos/README.md" },
-            { name: "Container and Kubernetes Security", readmePath: "container-and-kubernetes-security/README.md" },
+            { name: "Install OpenJDK 8 Mac", readmePath: "openjdk-8/README.md" },
+            { name: "Set up a local Pyspark Environment", readmePath: "pyspark/README.md" },
+            { name: "Container and Kubernetes Security", readmePath: "container-security/README.md" },
             { name: "Kubernetes 101", readmePath: "kubernetes-101/README.md" }
         ];
 
-        // Function to display folder cards
         function displayCourses() {
             const container = document.getElementById("courseContainer");
             container.innerHTML = "";
@@ -125,13 +133,12 @@
             });
         }
 
-        // Function to load and display the README.md file content
         async function loadReadme(courseName, readmePath) {
             document.getElementById("courseContainer").style.display = "none";
             document.getElementById("pageTitle").innerText = courseName;
 
             const readmeDiv = document.getElementById("readmeContent");
-            readmeDiv.style.display = "flex";
+            readmeDiv.style.display = "block";
 
             try {
                 const response = await fetch(readmePath);
@@ -139,10 +146,9 @@
 
                 const markdown = await response.text();
 
-                // Convert Markdown to HTML
-                const htmlContent = convertMarkdownToHTML(markdown);
+                // Convert Markdown to HTML using the 'marked' library
+                const htmlContent = marked.parse(markdown);
 
-                // Display the content
                 readmeDiv.innerHTML = `
                     <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
                     ${htmlContent}
@@ -155,38 +161,17 @@
             }
         }
 
-        // Simple Markdown to HTML Converter
-        function convertMarkdownToHTML(markdown) {
-            // Replace headers (## Header)
-            let html = markdown.replace(/^## (.*$)/gim, "<h2>$1</h2>");
-
-            // Replace bold (**text** or __text__)
-            html = html.replace(/\*\*(.*?)\*\*|__(.*?)__/gim, "<strong>$1$2</strong>");
-
-            // Replace italics (*text* or _text_)
-            html = html.replace(/\*(.*?)\*|_(.*?)_/gim, "<em>$1$2</em>");
-
-            // Replace code blocks (```)
-            html = html.replace(/```([\s\S]*?)```/gim, "<pre>$1</pre>");
-
-            // Replace line breaks
-            html = html.replace(/\n/gim, "<br>");
-
-            return html;
-        }
-
-        // Go back to the folder view
         function goBack() {
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "flex";
             document.getElementById("pageTitle").innerText = "Course Portal";
         }
 
-        // Initialize
         displayCourses();
     </script>
 </body>
 </html>
+
 
 
 
