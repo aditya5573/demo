@@ -1,7 +1,7 @@
 # Kubernetes Training Index
 
 <details>
-  <summary>1. Introduction to Kubernetes</summary>
+  <summary><a href="./Introduction_to_Kubernetes.md">1. Introduction to Kubernetes</a></summary>
   <ul>
     <li>What is Kubernetes?</li>
     <li>Core Concepts</li>
