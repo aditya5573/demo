@@ -1,13 +1,12 @@
 # Kubernetes Training Index
 
-1. **Introduction to Kubernetes**
-   <details>
+1. <**Introduction to Kubernetes**>
    - What is Kubernetes?
    - Overview of Container Orchestration
    - Benefits of Using Kubernetes
    - Kubernetes Architecture Components
    - Key Concepts (Pods, Nodes, Clusters, etc.)
-   </details>
+   </>
 
 2. **Setting Up Kubernetes**
    <details>
