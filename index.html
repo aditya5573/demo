@@ -146,8 +146,11 @@
 
         // Simple Markdown to HTML Converter
         function convertMarkdownToHTML(markdown) {
+            // Replace headers (### Header)
+            let html = markdown.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+        
             // Replace headers (## Header)
-            let html = markdown.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+            html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
             
             // Replace bold (**text** or __text__)
             html = html.replace(/\*\*(.*?)\*\*|__(.*?)__/gim, "<strong>$1$2</strong>");
@@ -155,14 +158,18 @@
             // Replace italics (*text* or _text_)
             html = html.replace(/\*(.*?)\*|_(.*?)_/gim, "<em>$1$2</em>");
             
+            // Replace inline links (*link text*)
+            html = html.replace(/\*(.*?)\*/gim, '<a href="#">$1</a>');
+            
             // Replace code blocks (```)
             html = html.replace(/```([\s\S]*?)```/gim, "<pre><code>$1</code></pre>");
             
             // Replace line breaks
             html = html.replace(/\n/gim, "<br>");
-
+        
             return html;
         }
+
 
         // Go back to the folder view
         function goBack() {
