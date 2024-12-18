@@ -10,7 +10,7 @@
 </details>
 
 <details>
-  <summary>2. Kubernetes Basics</summary>
+  <summary><a href="./Kubernetes_Basics.md">2. Kubernetes Basics</a></summary>
   <ul>
     <li>Cluster Components</li>
     <li>Understanding YAML Configuration Files</li>
