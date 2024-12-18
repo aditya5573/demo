@@ -15,12 +15,8 @@
         header {
             background-color: #0073e6;
             color: white;
-            padding: 10px 20px;
+            padding: 10px;
             text-align: center;
-        }
-
-        h1 {
-            margin: 0;
         }
 
         .container {
@@ -34,70 +30,82 @@
         .folder {
             background-color: white;
             border: 1px solid #ddd;
-            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 220px;
             padding: 15px;
-            text-align: center;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 250px;
             cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .folder:hover {
+            transform: translateY(-5px);
         }
 
         .folder img {
             width: 50px;
             height: 50px;
+            margin-bottom: 10px;
         }
 
         .folder h3 {
-            margin: 10px 0 5px;
+            margin: 5px 0;
             font-size: 18px;
         }
 
         .folder p {
+            color: #666;
             font-size: 14px;
-            color: #555;
+            line-height: 1.4;
         }
 
         .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: left;
             padding: 20px;
-        }
-
-        .content h1 {
-            color: #0073e6;
-            margin-bottom: 20px;
+            text-align: left;
+            max-width: 800px;
+            margin: auto;
         }
 
         .content pre {
             background-color: #f4f4f4;
-            border-left: 3px solid #0073e6;
+            border-left: 4px solid #0073e6;
             padding: 10px;
             overflow-x: auto;
             font-family: 'Courier New', Courier, monospace;
             white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
-        .content h2, .content h3 {
-            margin: 10px 0;
+        .content h2 {
             color: #0073e6;
+            font-size: 24px;
+        }
+
+        .content h3 {
+            color: #005bb5;
+            font-size: 20px;
         }
 
         .content ul {
-            margin: 0;
             padding-left: 20px;
         }
 
+        .content ul li {
+            margin: 5px 0;
+        }
+
         .content a {
-            color: blue;
+            color: #0073e6;
+            text-decoration: none;
+        }
+
+        .content a:hover {
             text-decoration: underline;
         }
 
         .back {
-            margin-bottom: 20px;
             display: inline-block;
+            margin-bottom: 20px;
             color: #0073e6;
             text-decoration: none;
             font-weight: bold;
@@ -114,82 +122,69 @@
     </header>
 
     <div id="courseContainer" class="container"></div>
-
     <div id="readmeContent" class="content" style="display: none;"></div>
 
     <script>
-        const repoPath = "./"; // Adjust this to match the folder structure of the repo
+        const githubRepo = "https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO_NAME/contents/";
 
-        // Fetch directories dynamically
+        // Fetch folders dynamically from GitHub
         async function fetchFolders() {
-            try {
-                const response = await fetch(repoPath);
-                const parser = new DOMParser();
-                const htmlDocument = parser.parseFromString(await response.text(), "text/html");
-                const links = [...htmlDocument.querySelectorAll("a")];
+            const response = await fetch(githubRepo);
+            const data = await response.json();
+            const container = document.getElementById("courseContainer");
 
-                // Filter folder names (excluding navigation links)
-                const folders = links
-                    .map(link => link.getAttribute("href"))
-                    .filter(name => name.endsWith("/") && name !== "../");
+            for (const item of data) {
+                if (item.type === "dir") {
+                    const readmePath = `${item.path}/README.md`;
+                    const description = await fetchReadmeDescription(readmePath);
 
-                return folders;
-            } catch (error) {
-                console.error("Error fetching folders:", error);
-                return [];
+                    const folderDiv = document.createElement("div");
+                    folderDiv.className = "folder";
+                    folderDiv.onclick = () => loadReadme(item.name, readmePath);
+
+                    folderDiv.innerHTML = `
+                        <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                        <h3>${item.name}</h3>
+                        <p>${description}</p>
+                    `;
+
+                    container.appendChild(folderDiv);
+                }
             }
         }
 
-        // Function to load the first 10 words of the README
-        async function fetchReadmeDescription(folder) {
+        // Fetch the first 10 words of the README.md
+        async function fetchReadmeDescription(readmePath) {
             try {
-                const readmePath = `${folder}README.md`;
-                const response = await fetch(readmePath);
-                if (!response.ok) throw new Error("README not found");
+                const response = await fetch(`${githubRepo}${readmePath}`);
+                if (!response.ok) return "No description available.";
 
-                const markdown = await response.text();
-                return markdown.split(" ").slice(0, 10).join(" ") + "...";
+                const content = await response.json();
+                const decoded = atob(content.content);
+                const firstLine = decoded.split(/\s+/).slice(0, 10).join(" ");
+                return firstLine || "No description available.";
             } catch {
                 return "No description available.";
             }
         }
 
-        // Display folders dynamically
-        async function displayFolders() {
-            const container = document.getElementById("courseContainer");
-            const folders = await fetchFolders();
-
-            for (const folder of folders) {
-                const description = await fetchReadmeDescription(folder);
-
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
-                folderDiv.innerHTML = `
-                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
-                    <h3>${folder.replace("/", "")}</h3>
-                    <p>${description}</p>
-                `;
-                folderDiv.onclick = () => loadReadme(folder);
-                container.appendChild(folderDiv);
-            }
-        }
-
-        // Function to load and display formatted README content
-        async function loadReadme(folder) {
+        // Load README content and display
+        async function loadReadme(folderName, readmePath) {
             document.getElementById("courseContainer").style.display = "none";
-            document.getElementById("pageTitle").innerText = folder.replace("/", "");
+            document.getElementById("pageTitle").innerText = folderName;
 
             const readmeDiv = document.getElementById("readmeContent");
             readmeDiv.style.display = "block";
 
             try {
-                const readmePath = `${folder}README.md`;
-                const response = await fetch(readmePath);
+                const response = await fetch(`${githubRepo}${readmePath}`);
                 if (!response.ok) throw new Error("README file not found.");
 
-                const markdown = await response.text();
-                const htmlContent = convertMarkdownToHTML(markdown);
+                const content = await response.json();
+                const markdown = atob(content.content);
 
+                // Convert Markdown to HTML
+                const htmlContent = convertMarkdownToHTML(markdown);
                 readmeDiv.innerHTML = `
                     <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
                     ${htmlContent}
@@ -202,30 +197,23 @@
             }
         }
 
-        // Markdown to HTML Converter
+        // Markdown to HTML converter
         function convertMarkdownToHTML(markdown) {
-            let html = markdown;
+            let html = markdown
+                .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+                .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+                .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+                .replace(/\*(.*?)\*/gim, "<em>$1</em>")
+                .replace(/```([\s\S]*?)```/gim, "<pre>$1</pre>")
+                .replace(/\n- (.*$)/gim, "<ul><li>$1</li></ul>")
+                .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank">$1</a>')
+                .replace(/\n/gim, "<br>");
 
-            // Headers
-            html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
-            html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
-
-            // Lists
-            html = html.replace(/^\* (.*$)/gim, "<ul><li>$1</li></ul>");
-
-            // Code blocks
-            html = html.replace(/```([\s\S]*?)```/gim, "<pre>$1</pre>");
-
-            // Links
-            html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gim, '<a href="$2" target="_blank">$1</a>');
-
-            // Paragraphs
-            html = html.replace(/\n/gim, "<br>");
-
+            // Merge adjacent <ul> tags
+            html = html.replace(/<\/ul>\s*<ul>/gim, "");
             return html;
         }
 
-        // Go back to folder view
         function goBack() {
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "flex";
@@ -233,7 +221,7 @@
         }
 
         // Initialize
-        displayFolders();
+        fetchFolders();
     </script>
 </body>
 </html>
