@@ -2,7 +2,6 @@
 
 1. **Introduction to Kubernetes**
    <details>
-   <summary>Subtopics</summary>
    - What is Kubernetes?
    - Overview of Container Orchestration
    - Benefits of Using Kubernetes
