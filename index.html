@@ -466,11 +466,12 @@
             width: 20px;
             height: 20px;
             fill: #0073e6;
-            transition: fill 0.3s ease;
+            transition: fill 0.3s ease, transform 0.3s ease;
         }
 
         .copy-icon.copied svg {
-            fill: #000000; /* Black color */
+            fill: #000000; /* Fully black color */
+            transform: scale(1.1); /* Slight scale for effect */
         }
 
         .copy-icon:hover svg {
