@@ -314,7 +314,7 @@
 
 
 
-
+        
 
 
 <!DOCTYPE html>
@@ -324,18 +324,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Portal</title>
     <style>
-        header {
-            background-color: #ab031d;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
+        }
+
+        .header {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .container {
@@ -372,7 +374,7 @@
 
         .back {
             position: absolute;
-            top: 20px;
+            top: 60px;
             left: 20px;
             background-color: #0073e6;
             color: white;
@@ -389,7 +391,7 @@
         }
 
         #folderName {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
@@ -510,10 +512,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 </head>
 <body>
-    <header>
-        <h1>Course Portal</h1>
-    </header>
-    
+    <div class="header">Course Portal</div>
+
     <div id="courseContainer" class="container">
         <div class="course-header">Available Courses</div>
         <div class="folder-container"></div>
@@ -675,12 +675,6 @@
     </script>
 </body>
 </html>
-
-
-        
-
-
-
 
 
 
