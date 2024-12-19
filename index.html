@@ -337,9 +337,9 @@
         }
 
         .back {
-            position: fixed;
-            top: 10px;
-            left: 10px;
+            position: absolute; /* Ensures the button is placed relative to the page */
+            top: 20px; /* Adjusted to avoid overlapping with the folder name */
+            left: 20px;
             background-color: #0073e6;
             color: white;
             padding: 10px 15px;
@@ -352,6 +352,13 @@
 
         .back:hover {
             background-color: #005bb5;
+        }
+
+        #folderName {
+            margin-top: 60px; /* Provides spacing to avoid overlap with the back button */
+            text-align: center; /* Center-align folder name */
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .sidebar {
@@ -413,12 +420,12 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 150px; /* Reduced size */
+            width: 150px; /* Adjusted folder size */
             cursor: pointer;
         }
 
         .folder img {
-            width: 40px; /* Reduced icon size */
+            width: 40px; /* Adjusted icon size */
             height: 40px;
         }
 
@@ -434,10 +441,10 @@
     <div id="courseContainer" class="container"></div>
 
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
+    <h2 id="folderName" style="display: none;"></h2>
 
     <div id="readmeContent" class="content-wrapper" style="display: none;">
         <div class="sidebar">
-            <h2 id="folderName"></h2>
             <ul class="file-list" id="fileList"></ul>
         </div>
         <div class="main-content" id="fileContent"></div>
@@ -450,30 +457,27 @@
 
         const markdownConverter = new showdown.Converter();
 
-        // Fetch the list of folders dynamically from GitHub
         async function fetchFolders() {
             const response = await fetch(apiUrl);
             const data = await response.json();
             return data.filter(item => item.type === "dir");
         }
 
-        // Fetch folder contents and display
         async function loadFolderContents(folderName) {
             const folderUrl = `${apiUrl}/${folderName}`;
             const response = await fetch(folderUrl);
             const files = await response.json();
-
             const mdFiles = files.filter(file => file.name.endsWith(".md"));
 
             document.getElementById("backButton").style.display = "block";
+            document.getElementById("folderName").style.display = "block";
+            document.getElementById("folderName").textContent = folderName;
             document.getElementById("readmeContent").style.display = "flex";
             document.getElementById("courseContainer").style.display = "none";
 
             const sidebar = document.getElementById("fileList");
-            const folderTitle = document.getElementById("folderName");
             const contentArea = document.getElementById("fileContent");
 
-            folderTitle.textContent = folderName;
             sidebar.innerHTML = "";
             contentArea.innerHTML = "";
 
@@ -495,29 +499,13 @@
                 listItem.appendChild(link);
                 sidebar.appendChild(listItem);
             });
-
-            // Link modules in Index.md dynamically
-            const indexFile = mdFiles.find(file => file.name === "Index.md");
-            if (indexFile) {
-                const response = await fetch(indexFile.download_url);
-                const indexContent = await response.text();
-                const linkedContent = indexContent.replace(
-                    /\[(.+?)\]\((.+?)\)/g,
-                    (_, moduleName, moduleFile) =>
-                        `<a href="#" onclick="openModule('${moduleFile}')">${moduleName}</a>`
-                );
-                const contentHtml = markdownConverter.makeHtml(linkedContent);
-                document.getElementById("fileContent").innerHTML = `<div class="markdown-content">${contentHtml}</div>`;
-            }
         }
 
-        // Load and display content of a specific file
         async function loadFileContent(file, link) {
             const response = await fetch(file.download_url);
             const content = await response.text();
 
-            const links = document.querySelectorAll(".file-list a");
-            links.forEach(a => a.classList.remove("active"));
+            document.querySelectorAll(".file-list a").forEach(a => a.classList.remove("active"));
             link.classList.add("active");
 
             const contentArea = document.getElementById("fileContent");
@@ -525,23 +513,13 @@
             contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
         }
 
-        // Open module files linked in Index.md
-        async function openModule(moduleFile) {
-            const sidebarLinks = document.querySelectorAll(".file-list a");
-            const matchedLink = Array.from(sidebarLinks).find(link =>
-                link.textContent.trim() === moduleFile
-            );
-            if (matchedLink) matchedLink.click();
-        }
-
-        // Go back to the folder view
         function goBack() {
             document.getElementById("backButton").style.display = "none";
+            document.getElementById("folderName").style.display = "none";
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "flex";
         }
 
-        // Display folder cards
         async function displayFolders() {
             const container = document.getElementById("courseContainer");
             container.innerHTML = "Loading...";
@@ -560,7 +538,6 @@
             });
         }
 
-        // Initialize the portal
         displayFolders();
     </script>
 </body>
