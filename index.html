@@ -502,7 +502,9 @@
 </head>
 <body>
     <div id="courseContainer" class="container">
-        <div class="course-header" id="courseHeader">Available Courses</div>
+        <!-- Course dashboard header -->
+        <div class="course-header" id="courseHeader">Course Dashboard</div>
+        <div class="course-header" id="courseHeaderTitle">Available Courses</div>
         <div class="folder-container"></div>
     </div>
 
@@ -539,8 +541,9 @@
             const files = await response.json();
             mdFiles = files.filter(file => file.name.endsWith(".md"));
 
-            // Hide the course header and show the folder name only
+            // Hide the course dashboard and show the folder name only
             document.getElementById("courseHeader").style.display = "none";
+            document.getElementById("courseHeaderTitle").style.display = "none";
             document.getElementById("backButton").style.display = "block";
             document.getElementById("folderName").style.display = "block";
             document.getElementById("folderName").textContent = folderName;
@@ -624,6 +627,7 @@
 
         function goBack() {
             document.getElementById("courseHeader").style.display = "block";
+            document.getElementById("courseHeaderTitle").style.display = "block";
             document.getElementById("backButton").style.display = "none";
             document.getElementById("folderName").style.display = "none";
             document.getElementById("readmeContent").style.display = "none";
@@ -665,6 +669,7 @@
     </script>
 </body>
 </html>
+
 
 
 
