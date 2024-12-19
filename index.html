@@ -504,7 +504,7 @@
 </head>
 <body>
     <div id="courseContainer" class="container">
-        <div class="course-header">Available Courses</div>
+        <div class="course-header" id="courseHeader">Available Courses</div>
         <div class="folder-container"></div>
     </div>
 
@@ -521,7 +521,7 @@
     <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
 
     <script>
-        const repoOwner = "aditya5573";
+        const repoOwner = "adity5573";
         const repoName = "demo";
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
@@ -541,6 +541,7 @@
             const files = await response.json();
             mdFiles = files.filter(file => file.name.endsWith(".md"));
 
+            document.getElementById("courseHeader").style.display = "none";  // Hide course title when inside a folder
             document.getElementById("backButton").style.display = "block";
             document.getElementById("folderName").style.display = "block";
             document.getElementById("folderName").textContent = folderName;
@@ -608,62 +609,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M8 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H8zm-4 4h2v12h10v2H6a2 2 0 0 1-2-2V8z"/>
                     </svg>`;
-                button.onclick = () => copyToClipboard(pre.innerText.trim(), button);
-                pre.appendChild(button);
-            });
-        }
+        
 
-        function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                button.classList.add("copied");
-                setTimeout(() => {
-                    button.classList.remove("copied");
-                }, 3000);
-            });
-        }
-
-        function goBack() {
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("folderName").style.display = "none";
-            document.getElementById("readmeContent").style.display = "none";
-            document.getElementById("courseContainer").style.display = "block";
-            document.getElementById("nextButton").style.display = "none";
-        }
-
-        function loadNextFile() {
-            if (currentFileIndex < mdFiles.length - 1) {
-                currentFileIndex++;
-                const nextFile = mdFiles[currentFileIndex];
-                const sidebarLinks = document.querySelectorAll(".file-list a");
-                sidebarLinks.forEach(link => link.classList.remove("active"));
-                const nextLink = sidebarLinks[currentFileIndex];
-                nextLink.classList.add("active");
-                loadFileContent(nextFile, nextLink);
-            }
-        }
-
-        async function displayFolders() {
-            const container = document.querySelector(".folder-container");
-            container.innerHTML = "Loading...";
-            const folders = await fetchFolders();
-            container.innerHTML = "";
-
-            folders.forEach(folder => {
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
-                folderDiv.innerHTML = `
-                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
-                    <h3>${folder.name}</h3>
-                `;
-                folderDiv.onclick = () => loadFolderContents(folder.name);
-                container.appendChild(folderDiv);
-            });
-        }
-
-        displayFolders();
-    </script>
-</body>
-</html>
 
 
 
