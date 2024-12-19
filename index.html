@@ -331,26 +331,6 @@
             background-color: #f9f9f9;
         }
 
-        /* Title strip for Course Dashboard */
-        .dashboard-strip {
-            display: none; /* Initially hidden, will show only on the folder page */
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            position: relative;
-        }
-
-        .dashboard-strip img {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 30px; /* Adjust the logo size */
-        }
-
         .container {
             padding: 20px;
         }
@@ -492,8 +472,8 @@
         }
 
         .copy-icon.copied svg {
-            fill: #000000;
-            transform: scale(1.1);
+            fill: #000000; /* Fully black color */
+            transform: scale(1.1); /* Slight scale for effect */
         }
 
         .copy-icon:hover svg {
@@ -523,19 +503,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 </head>
 <body>
-    <!-- Course Dashboard Title Strip -->
-    <div class="dashboard-strip" id="dashboardStrip">
-        Course Dashboard
-        <img src="DataCouchLogo.png" alt="DataCouch Logo">
-    </div>
-
-    <!-- Folder page content -->
     <div id="courseContainer" class="container">
         <div class="course-header">Available Courses</div>
         <div class="folder-container"></div>
     </div>
 
-    <!-- Inside folder content -->
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
     <h2 id="folderName" style="display: none;"></h2>
 
@@ -549,8 +521,8 @@
     <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
 
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
+        const repoOwner = "your-github-username"; // Replace with your GitHub username
+        const repoName = "your-repo-name"; // Replace with your repository name
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
         const markdownConverter = new showdown.Converter();
@@ -569,8 +541,6 @@
             const files = await response.json();
             mdFiles = files.filter(file => file.name.endsWith(".md"));
 
-            // Show the folder-specific elements
-            document.getElementById("dashboardStrip").style.display = "block"; // Show title strip
             document.getElementById("backButton").style.display = "block";
             document.getElementById("folderName").style.display = "block";
             document.getElementById("folderName").textContent = folderName;
@@ -613,46 +583,46 @@
             link.classList.add("active");
 
             const contentArea = document.getElementById("fileContent");
-            const htmlContent = markdownConverter.makeHtml(content);
+            const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
+            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
+            addCopyButtons();
+            document.querySelectorAll("pre code").forEach((el) => {
+                hljs.highlightElement(el);
+            });
 
-            contentArea.innerHTML = htmlContent;
-            highlightCodeBlocks();
-
-            currentFileIndex = mdFiles.indexOf(file);
+            currentFileIndex = mdFiles.indexOf(file); // Set current file index
         }
 
-        function highlightCodeBlocks() {
-            document.querySelectorAll("pre code").forEach(block => {
-                hljs.highlightBlock(block);
+        function formatCodeBlocks(content) {
+            return content.replace(/```([\s\S]*?)```/g, (match, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`; // Trim code to remove extra newlines
+            });
+        }
+
+        function addCopyButtons() {
+            const preElements = document.querySelectorAll("pre");
+            preElements.forEach(pre => {
                 const button = document.createElement("button");
-                button.classList.add("copy-icon");
+                button.className = "copy-icon";
                 button.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                        <path d="M3.5 0a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-2A.5.5 0 0 1 1 11V1a.5.5 0 0 1 .5-.5h2z"/>
-                    </svg>
-                `;
-                button.onclick = () => copyCode(block.querySelector("code"), button);
-                block.appendChild(button);
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M8 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H8zm-4 4h2v12h10v2H6a2 2 0 0 1-2-2V8z"/>
+                    </svg>`;
+                button.onclick = () => copyToClipboard(pre.innerText.trim(), button); // Trim extra spaces/newlines
+                pre.appendChild(button);
             });
         }
 
-        function copyCode(codeElement, button) {
-            const codeText = codeElement.textContent.trim();
-            navigator.clipboard.writeText(codeText).then(() => {
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
                 button.classList.add("copied");
-                setTimeout(() => button.classList.remove("copied"), 3000);
+                setTimeout(() => {
+                    button.classList.remove("copied");
+                }, 3000); // Remove the black color after 3 seconds
             });
-        }
-
-        function loadNextFile() {
-            if (currentFileIndex + 1 < mdFiles.length) {
-                currentFileIndex++;
-                loadFileContent(mdFiles[currentFileIndex], document.querySelectorAll(".file-list a")[currentFileIndex]);
-            }
         }
 
         function goBack() {
-            document.getElementById("dashboardStrip").style.display = "none";
             document.getElementById("backButton").style.display = "none";
             document.getElementById("folderName").style.display = "none";
             document.getElementById("readmeContent").style.display = "none";
@@ -660,10 +630,23 @@
             document.getElementById("nextButton").style.display = "none"; // Hide next button
         }
 
-        // Initial Folder Display
+        function loadNextFile() {
+            if (currentFileIndex < mdFiles.length - 1) {
+                currentFileIndex++;
+                const nextFile = mdFiles[currentFileIndex];
+                const sidebarLinks = document.querySelectorAll(".file-list a");
+                sidebarLinks.forEach(link => link.classList.remove("active"));
+                const nextLink = sidebarLinks[currentFileIndex];
+                nextLink.classList.add("active");
+                loadFileContent(nextFile, nextLink);
+            }
+        }
+
         async function displayFolders() {
-            const folders = await fetchFolders();
             const container = document.querySelector(".folder-container");
+            container.innerHTML = "Loading...";
+            const folders = await fetchFolders();
+            container.innerHTML = "";
 
             folders.forEach(folder => {
                 const folderDiv = document.createElement("div");
@@ -677,11 +660,11 @@
             });
         }
 
-        // Initialize
         displayFolders();
     </script>
 </body>
 </html>
+
 
 
 
