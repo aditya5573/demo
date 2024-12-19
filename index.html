@@ -337,7 +337,7 @@
             background-color: red;
             color: white;
             padding: 10px 20px;
-            text-align: left;
+            text-align: center;
             font-size: 24px;
             font-weight: bold;
             position: relative;
@@ -549,8 +549,8 @@
     <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
 
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
+        const repoOwner = "your-github-username"; // Replace with your GitHub username
+        const repoName = "your-repo-name"; // Replace with your repository name
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
         const markdownConverter = new showdown.Converter();
@@ -613,39 +613,31 @@
             link.classList.add("active");
 
             const contentArea = document.getElementById("fileContent");
-            const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
-            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
-            addCopyButtons();
-            document.querySelectorAll("pre code").forEach((el) => {
-                hljs.highlightElement(el);
-            });
+            const htmlContent = markdownConverter.makeHtml(content);
 
-            currentFileIndex = mdFiles.indexOf(file); // Set current file index
+            contentArea.innerHTML = htmlContent;
+            highlightCodeBlocks();
+
+            currentFileIndex = mdFiles.indexOf(file);
         }
 
-        function formatCodeBlocks(content) {
-            return content.replace(/```([\s\S]*?)```/g, (match, code) => {
-                return `<pre><code>${code.trim()}</code></pre>`; // Trim code to remove extra newlines
-            });
-        }
-
-        function addCopyButtons() {
-            const preElements = document.querySelectorAll("pre");
-            preElements.forEach(pre => {
+        function highlightCodeBlocks() {
+            document.querySelectorAll("pre code").forEach(block => {
+                hljs.highlightBlock(block);
                 const button = document.createElement("button");
-                button.className = "copy-icon";
+                button.classList.add("copy-icon");
                 button.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                         <path d="M3.5 0a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-2A.5.5 0 0 1 1 11V1a.5.5 0 0 1 .5-.5h2z"/>
                     </svg>
                 `;
-                button.onclick = () => copyCode(pre.querySelector("code"), button);
-                pre.appendChild(button);
+                button.onclick = () => copyCode(block.querySelector("code"), button);
+                block.appendChild(button);
             });
         }
 
         function copyCode(codeElement, button) {
-            const codeText = codeElement.textContent;
+            const codeText = codeElement.textContent.trim();
             navigator.clipboard.writeText(codeText).then(() => {
                 button.classList.add("copied");
                 setTimeout(() => button.classList.remove("copied"), 3000);
