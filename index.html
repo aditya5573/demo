@@ -371,21 +371,6 @@
             height: 40px;
         }
 
-        /* Styling for the search bar */
-        .search-bar-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            padding: 8px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 250px;
-        }
-
         .back {
             position: absolute;
             top: 20px;
@@ -520,6 +505,24 @@
         .next-button:hover {
             background-color: #005bb5;
         }
+
+        /* Search Bar */
+        .search-bar {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 200px;
+            background-color: #fff;
+        }
+
+        .folder.highlighted {
+            border: 2px solid #0073e6;
+            background-color: #f0f8ff;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -530,12 +533,12 @@
         Course Portal
     </div>
 
+    <!-- Search Bar -->
+    <input type="text" id="folderSearch" class="search-bar" placeholder="Search Folder" oninput="searchFolders()" />
+
     <div id="courseContainer" class="container">
-        <div class="search-bar-container">
-            <input type="text" class="search-bar" id="searchBar" placeholder="Search Courses..." onkeyup="filterCourses()">
-        </div>
         <div class="course-header">Available Courses</div>
-        <div class="folder-container"></div>
+        <div class="folder-container" id="folderContainer"></div>
     </div>
 
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
@@ -558,7 +561,7 @@
         const markdownConverter = new showdown.Converter();
         let currentFileIndex = 0;
         let mdFiles = [];
-        let allCourses = [];
+        let allFolders = [];
 
         async function fetchFolders() {
             const response = await fetch(apiUrl);
@@ -665,20 +668,32 @@
             if (currentFileIndex < mdFiles.length - 1) {
                 currentFileIndex++;
                 const nextFile = mdFiles[currentFileIndex];
-                const sidebarLinks = document.querySelectorAll(".file-list a");
-                sidebarLinks.forEach(link => link.classList.remove("active"));
-                const nextLink = sidebarLinks[currentFileIndex];
-                nextLink.classList.add("active");
+                const nextLink = document.querySelectorAll(".file-list a")[currentFileIndex];
                 loadFileContent(nextFile, nextLink);
             }
         }
 
-        function filterCourses() {
-            const searchQuery = document.getElementById("searchBar").value.toLowerCase();
-            const filteredCourses = allCourses.filter(course =>
-                course.name.toLowerCase().includes(searchQuery)
-            );
-            displayCourses(filteredCourses);
+        function searchFolders() {
+            const searchTerm = document.getElementById("folderSearch").value.toLowerCase();
+            const folderDivs = document.querySelectorAll(".folder");
+
+            folderDivs.forEach(folder => {
+                const folderName = folder.querySelector("h3").textContent.toLowerCase();
+                if (folderName.includes(searchTerm)) {
+                    folder.style.display = "block";
+                } else {
+                    folder.style.display = "none";
+                }
+            });
+
+            const highlightedFolder = Array.from(folderDivs).find(folder => {
+                const folderName = folder.querySelector("h3").textContent.toLowerCase();
+                return folderName.includes(searchTerm);
+            });
+
+            if (highlightedFolder) {
+                highlightedFolder.classList.add("highlighted");
+            }
         }
 
         async function displayFolders() {
@@ -686,7 +701,6 @@
             container.innerHTML = "Loading...";
             const folders = await fetchFolders();
             container.innerHTML = "";
-            allCourses = folders;
 
             folders.forEach(folder => {
                 const folderDiv = document.createElement("div");
@@ -704,6 +718,7 @@
     </script>
 </body>
 </html>
+
 
 
 
