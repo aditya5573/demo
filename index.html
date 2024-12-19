@@ -353,12 +353,12 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 150px; /* Adjusted folder size */
+            width: 150px;
             cursor: pointer;
         }
 
         .folder img {
-            width: 40px; /* Adjusted icon size */
+            width: 40px;
             height: 40px;
         }
 
@@ -438,6 +438,28 @@
             border: 1px solid #ccc;
             padding: 15px;
             border-radius: 5px;
+            position: relative;
+        }
+
+        pre {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #0073e6;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #005bb5;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -521,6 +543,7 @@
             const contentArea = document.getElementById("fileContent");
             const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
             contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
+            addCopyButtons();
             document.querySelectorAll("pre code").forEach((el) => {
                 hljs.highlightElement(el);
             });
@@ -529,6 +552,23 @@
         function formatCodeBlocks(content) {
             return content.replace(/```([\s\S]*?)```/g, (match, code) => {
                 return `<pre><code>${code}</code></pre>`;
+            });
+        }
+
+        function addCopyButtons() {
+            const preElements = document.querySelectorAll("pre");
+            preElements.forEach(pre => {
+                const button = document.createElement("button");
+                button.className = "copy-btn";
+                button.textContent = "Copy Code";
+                button.onclick = () => copyToClipboard(pre.innerText);
+                pre.appendChild(button);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Code copied to clipboard!");
             });
         }
 
@@ -561,6 +601,7 @@
     </script>
 </body>
 </html>
+
 
 
 
