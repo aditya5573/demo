@@ -504,7 +504,7 @@
 </head>
 <body>
     <div id="courseContainer" class="container">
-        <div class="course-header" id="courseHeader">Available Courses</div>
+        <div class="course-header">Available Courses</div>
         <div class="folder-container"></div>
     </div>
 
@@ -521,7 +521,7 @@
     <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
 
     <script>
-        const repoOwner = "adityaa5573";
+        const repoOwner = "aditya5573";
         const repoName = "demo";
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
@@ -544,7 +544,6 @@
             document.getElementById("backButton").style.display = "block";
             document.getElementById("folderName").style.display = "block";
             document.getElementById("folderName").textContent = folderName;
-            document.getElementById("courseHeader").style.display = "none";  // Hide header in folder view
             document.getElementById("readmeContent").style.display = "flex";
             document.getElementById("courseContainer").style.display = "none";
 
@@ -628,7 +627,6 @@
             document.getElementById("folderName").style.display = "none";
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "block";
-            document.getElementById("courseHeader").style.display = "block";  // Show header again when back
             document.getElementById("nextButton").style.display = "none";
         }
 
