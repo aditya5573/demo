@@ -1,7 +1,7 @@
 # Linux Docker Fundamentals Training Index
 
 <details>
-  <summary><a href="./Module1_Introduction_to_Linux_and_Docker.md">1. Introduction to Linux and Docker</a></summary>
+  <summary>1. Introduction to Linux and Docker</summary>
   <ul>
     <li>Overview of Linux and Open Source</li>
     <li>What is Docker?</li>
@@ -10,7 +10,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module2_Setting_Up_Linux_and_Docker.md">2. Setting Up Linux and Docker</a></summary>
+  <summary>2. Setting Up Linux and Docker</summary>
   <ul>
     <li>Installing Linux (Ubuntu/CentOS)</li>
     <li>Installing Docker on Linux</li>
@@ -19,7 +19,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module3_Understanding_Docker_Architecture.md">3. Understanding Docker Architecture</a></summary>
+  <summary>3. Understanding Docker Architecture</summary>
   <ul>
     <li>Docker Engine and Daemon</li>
     <li>Docker CLI and Docker Desktop</li>
@@ -28,7 +28,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module4_Docker_Images.md">4. Docker Images</a></summary>
+  <summary>4. Docker Images</summary>
   <ul>
     <li>What are Docker Images?</li>
     <li>Pulling Images from Docker Hub</li>
@@ -38,7 +38,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module5_Docker_Containers.md">5. Docker Containers</a></summary>
+  <summary>5. Docker Containers</summary>
   <ul>
     <li>Creating and Running Containers</li>
     <li>Stopping, Restarting, and Removing Containers</li>
@@ -48,7 +48,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module6_Docker_Networking.md">6. Docker Networking</a></summary>
+  <summary>6. Docker Networking</summary>
   <ul>
     <li>Docker Networking Overview</li>
     <li>Bridge, Host, and None Networks</li>
@@ -58,7 +58,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module7_Docker_Volumes_and_Storage.md">7. Docker Volumes and Storage</a></summary>
+  <summary>7. Docker Volumes and Storage</summary>
   <ul>
     <li>Understanding Docker Storage</li>
     <li>Managing Data with Volumes</li>
@@ -68,7 +68,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module8_Docker_Compose.md">8. Docker Compose</a></summary>
+  <summary>8. Docker Compose</summary>
   <ul>
     <li>Introduction to Docker Compose</li>
     <li>Writing a `docker-compose.yml` File</li>
@@ -78,7 +78,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module9_Docker_Registries.md">9. Docker Registries</a></summary>
+  <summary>9. Docker Registries</summary>
   <ul>
     <li>Understanding Docker Hub</li>
     <li>Pushing and Pulling Images to/from Docker Hub</li>
@@ -87,7 +87,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module10_Dockerfile_Best_Practices.md">10. Dockerfile Best Practices</a></summary>
+  <summary>10. Dockerfile Best Practices</summary>
   <ul>
     <li>Writing Efficient Dockerfiles</li>
     <li>Using Multi-Stage Builds</li>
@@ -97,7 +97,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module11_Docker_Security.md">11. Docker Security</a></summary>
+  <summary>11. Docker Security</summary>
   <ul>
     <li>Best Practices for Securing Docker</li>
     <li>User Privileges in Docker</li>
@@ -107,7 +107,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module12_Monitoring_and_Logging_Docker.md">12. Monitoring and Logging Docker</a></summary>
+  <summary>12. Monitoring and Logging Docker</summary>
   <ul>
     <li>Logging with Docker</li>
     <li>Docker Logs vs. System Logs</li>
@@ -117,7 +117,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module13_Docker_Swarm_Fundamentals.md">13. Docker Swarm Fundamentals</a></summary>
+  <summary>13. Docker Swarm Fundamentals</summary>
   <ul>
     <li>Introduction to Docker Swarm</li>
     <li>Setting Up a Swarm Cluster</li>
@@ -127,7 +127,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module14_Hands_On_Projects_and_Exercises.md">14. Hands-On Projects and Exercises</a></summary>
+  <summary>14. Hands-On Projects and Exercises</summary>
   <ul>
     <li>Building a Custom Docker Image</li>
     <li>Deploying a Multi-Tier Application with Docker Compose</li>
