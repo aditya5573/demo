@@ -586,6 +586,9 @@
         }
 
         function copyToClipboard(text, button) {
+            // Remove extra spaces and newlines above and below the code
+            const cleanText = text.trim();
+            
             navigator.clipboard.writeText(text).then(() => {
                 button.classList.add("copied");
                 setTimeout(() => {
