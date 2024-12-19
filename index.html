@@ -331,11 +331,11 @@
         }
 
         .title-strip {
-            background-color: #ab031d;
+            background-color: #0073e6;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 0;
             text-align: center;
-            font-size: 36px;
+            font-size: 24px;
             font-weight: bold;
         }
 
@@ -371,11 +371,26 @@
             height: 40px;
         }
 
+        /* Styling for the search bar */
+        .search-bar-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 250px;
+        }
+
         .back {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: #000000;
+            background-color: #0073e6;
             color: white;
             padding: 10px 15px;
             text-decoration: none;
@@ -386,7 +401,7 @@
         }
 
         .back:hover {
-            background-color: #b8b8b8;
+            background-color: #005bb5;
         }
 
         #folderName {
@@ -492,7 +507,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #000000;
+            background-color: #0073e6;
             color: white;
             padding: 10px 15px;
             font-weight: bold;
@@ -503,7 +518,7 @@
         }
 
         .next-button:hover {
-            background-color: #b8b8b8;
+            background-color: #005bb5;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -516,6 +531,9 @@
     </div>
 
     <div id="courseContainer" class="container">
+        <div class="search-bar-container">
+            <input type="text" class="search-bar" id="searchBar" placeholder="Search Courses..." onkeyup="filterCourses()">
+        </div>
         <div class="course-header">Available Courses</div>
         <div class="folder-container"></div>
     </div>
@@ -540,6 +558,7 @@
         const markdownConverter = new showdown.Converter();
         let currentFileIndex = 0;
         let mdFiles = [];
+        let allCourses = [];
 
         async function fetchFolders() {
             const response = await fetch(apiUrl);
@@ -654,11 +673,20 @@
             }
         }
 
+        function filterCourses() {
+            const searchQuery = document.getElementById("searchBar").value.toLowerCase();
+            const filteredCourses = allCourses.filter(course =>
+                course.name.toLowerCase().includes(searchQuery)
+            );
+            displayCourses(filteredCourses);
+        }
+
         async function displayFolders() {
             const container = document.querySelector(".folder-container");
             container.innerHTML = "Loading...";
             const folders = await fetchFolders();
             container.innerHTML = "";
+            allCourses = folders;
 
             folders.forEach(folder => {
                 const folderDiv = document.createElement("div");
