@@ -508,6 +508,29 @@
     </style>
 </head>
 <body>
+    <div id="courseDashboard" style="background-color: #0073e6; color: white; padding: 10px; text-align: center;">
+        <h1>Course Dashboard</h1>
+    </div>
+
+    <div id="courseContainer" class="container">
+        <div class="course-header">Available Courses</div>
+        <div class="folder-container"></div>
+    </div>
+
+    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
+    <h2 id="folderName" style="display: none;"></h2>
+
+    <div id="readmeContent" class="content-wrapper" style="display: none;">
+        <div class="sidebar">
+            <ul class="file-list" id="fileList"></ul>
+        </div>
+        <div class="main-content" id="fileContent"></div>
+    </div>
+
+    <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
+
+    
+<!-- <body>
     <!-- Course Dashboard Header -->
     <div class="header-strip">Course Dashboard</div>
 
@@ -532,7 +555,10 @@
     </div>
 
     <!-- Next Button -->
-    <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
+    <!-- 
+    <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button> -->
+
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -563,6 +589,7 @@
             document.getElementById("folderName").textContent = folderName;
             document.getElementById("readmeContent").style.display = "flex";
             document.getElementById("courseContainer").style.display = "none";
+            document.getElementById("courseDashboard").style.display = "none"; // Hide the dashboard
 
             const sidebar = document.getElementById("fileList");
             const contentArea = document.getElementById("fileContent");
@@ -645,6 +672,7 @@
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "block";
             document.getElementById("nextButton").style.display = "none";
+            document.getElementById("courseDashboard").style.display = "block"; // Show the dashboard
         }
 
         function loadNextFile() {
