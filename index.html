@@ -587,13 +587,13 @@
 
         function copyToClipboard(text, button) {
             // Remove extra spaces and newlines above and below the code
-            const cleanText = text.trim();
+            const trimmedText = text.trim();
             
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(trimmedText).then(() => {
                 button.classList.add("copied");
                 setTimeout(() => {
                     button.classList.remove("copied");
-                }, 6000); // Remove the green class after 3 seconds
+                }, 5000); // Remove the green class after 3 seconds
             });
         }
 
