@@ -329,137 +329,83 @@
             background-color: #f9f9f9;
         }
 
+        header {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
         .container {
-            padding: 20px;
-        }
-
-        .course-header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .folder-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            padding: 20px;
         }
 
         .folder {
             background-color: white;
             border: 1px solid #ddd;
+            margin: 10px;
             padding: 15px;
             text-align: center;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 150px;
+            width: 200px;
             cursor: pointer;
         }
 
         .folder img {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
         }
 
-        .back {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #0073e6;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1000;
+        .folder h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
         }
 
-        .back:hover {
-            background-color: #005bb5;
+        .folder p {
+            font-size: 14px;
+            color: #666;
         }
 
-        #folderName {
-            margin-top: 60px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .content-wrapper {
-            display: flex;
-            height: 100vh;
-            background-color: #e0e0e0;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-y: auto;
-            border-right: 1px solid #ccc;
-        }
-
-        .file-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .file-list li {
-            margin: 5px 0;
-        }
-
-        .file-list a {
-            text-decoration: none;
-            color: #0073e6;
-            padding: 5px 10px;
-            display: block;
-            border-radius: 3px;
-        }
-
-        .file-list a.active {
-            background-color: yellow;
-        }
-
-        .file-list a:hover {
-            text-decoration: underline;
-        }
-
-        .main-content {
-            flex: 1;
+        .content {
             padding: 20px;
-            overflow-y: auto;
         }
 
-        .markdown-content {
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
-            position: relative;
+        h2 {
+            color: #0073e6;
+            margin-top: 20px;
         }
 
         pre {
-            position: relative;
+            background-color: #f4f4f4;
+            border-left: 3px solid #0073e6;
             padding: 10px;
-            background: #f4f4f4;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
         }
 
-        pre code {
-            display: block;
-            overflow-x: auto;
+        .back {
+            margin-bottom: 20px;
+            display: inline-block;
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: bold;
         }
 
         .copy-icon {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 10px;
             background: none;
             border: none;
             cursor: pointer;
+            transition: fill 0.3s ease;
         }
 
         .copy-icon svg {
@@ -469,108 +415,126 @@
             transition: fill 0.3s ease;
         }
 
-        /* Style when the icon is clicked (green color) */
         .copy-icon.copied svg {
-            fill: #28a745; /* Green color */
+            fill: black; /* Black color after clicking */
         }
 
         .copy-icon:hover svg {
             fill: #005bb5;
         }
+
+        .folder-container-title {
+            font-weight: bold;
+            color: #0073e6;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 </head>
 <body>
+    <header>
+        <h1>Course Portal</h1>
+    </header>
+
     <div id="courseContainer" class="container">
-        <div class="course-header">Available Courses</div>
-        <div class="folder-container"></div>
+        <div class="folder-container-title">Available Courses</div>
     </div>
 
-    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
-    <h2 id="folderName" style="display: none;"></h2>
-
-    <div id="readmeContent" class="content-wrapper" style="display: none;">
-        <div class="sidebar">
-            <ul class="file-list" id="fileList"></ul>
-        </div>
-        <div class="main-content" id="fileContent"></div>
+    <div id="readmeContent" class="content" style="display: none;">
+        <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
+        <div id="folderTitle"></div>
+        <div id="indexContent"></div>
+        <div id="codeContent"></div>
     </div>
 
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
-        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+        const courses = [
+            { name: "chaos", description: "Learn about chaos engineering and how to inject faults in a controlled way." },
+            { name: "container-and-kubernetes-security", description: "Enhance container and Kubernetes security with best practices." },
+            { name: "kubernetes-101", description: "Join our hands-on Kubernetes workshop to learn basic concepts and deployments." }
+        ];
 
-        const markdownConverter = new showdown.Converter();
+        // Dynamically generate folder cards
+        function displayCourses() {
+            const container = document.getElementById("courseContainer");
+            container.innerHTML = "";
 
-        async function fetchFolders() {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            return data.filter(item => item.type === "dir");
+            const title = document.createElement("div");
+            title.className = "folder-container-title";
+            title.innerText = "Available Courses";
+            container.appendChild(title);
+
+            courses.forEach(course => {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                folderDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                    <h3>${course.name}</h3>
+                    <p>${truncateDescription(course.description, 15)}</p>
+                `;
+                folderDiv.onclick = () => loadFolder(course.name);
+                container.appendChild(folderDiv);
+            });
         }
 
-        async function loadFolderContents(folderName) {
-            const folderUrl = `${apiUrl}/${folderName}`;
-            const response = await fetch(folderUrl);
-            const files = await response.json();
-            const mdFiles = files.filter(file => file.name.endsWith(".md"));
+        // Truncate description to 15 words
+        function truncateDescription(desc, limit) {
+            return desc.split(" ").slice(0, limit).join(" ") + "...";
+        }
 
-            document.getElementById("backButton").style.display = "block";
-            document.getElementById("folderName").style.display = "block";
-            document.getElementById("folderName").textContent = folderName;
-            document.getElementById("readmeContent").style.display = "flex";
+        // Load folder content
+        function loadFolder(courseName) {
             document.getElementById("courseContainer").style.display = "none";
+            const readmeDiv = document.getElementById("readmeContent");
+            readmeDiv.style.display = "block";
 
-            const sidebar = document.getElementById("fileList");
-            const contentArea = document.getElementById("fileContent");
+            const folderTitle = document.getElementById("folderTitle");
+            folderTitle.innerHTML = `<h1><b>${courseName}</b></h1>`;
 
-            sidebar.innerHTML = "";
-            contentArea.innerHTML = "";
-
-            mdFiles.forEach((file, index) => {
-                const listItem = document.createElement("li");
-                const link = document.createElement("a");
-                link.textContent = file.name;
-                link.href = "#";
-                link.onclick = () => {
-                    loadFileContent(file, link);
-                    return false;
-                };
-
-                if (index === 0) {
-                    link.classList.add("active");
-                    loadFileContent(file, link);
-                }
-
-                listItem.appendChild(link);
-                sidebar.appendChild(listItem);
-            });
+            loadIndexAndCode(courseName);
         }
 
-        async function loadFileContent(file, link) {
-            const response = await fetch(file.download_url);
-            const content = await response.text();
+        // Go back to course list view
+        function goBack() {
+            document.getElementById("readmeContent").style.display = "none";
+            document.getElementById("courseContainer").style.display = "flex";
+        }
 
-            document.querySelectorAll(".file-list a").forEach(a => a.classList.remove("active"));
-            link.classList.add("active");
+        // Load the index and code content for a folder (simulated for this example)
+        function loadIndexAndCode(courseName) {
+            const indexContent = document.getElementById("indexContent");
+            const codeContent = document.getElementById("codeContent");
 
-            const contentArea = document.getElementById("fileContent");
-            const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
-            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
+            // Simulated index (can be dynamic if integrating with a backend)
+            indexContent.innerHTML = `
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="#module1" onclick="loadModule('Module 1')">Module 1</a></li>
+                    <li><a href="#module2" onclick="loadModule('Module 2')">Module 2</a></li>
+                    <li><a href="#module3" onclick="loadModule('Module 3')">Module 3</a></li>
+                </ul>
+            `;
+
+            // Simulated code block
+            codeContent.innerHTML = `
+                <h2>Code for ${courseName}</h2>
+                <pre><code>console.log("Hello World");</code></pre>
+            `;
             addCopyButtons();
-            document.querySelectorAll("pre code").forEach((el) => {
-                hljs.highlightElement(el);
-            });
         }
 
-        function formatCodeBlocks(content) {
-            return content.replace(/```([\s\S]*?)```/g, (match, code) => {
-                return `<pre><code>${code}</code></pre>`;
-            });
+        // Load specific module content (simulated for this example)
+        function loadModule(moduleName) {
+            const codeContent = document.getElementById("codeContent");
+            codeContent.innerHTML = `
+                <h2>${moduleName} Code</h2>
+                <pre><code>console.log("${moduleName} Module Code");</code></pre>
+            `;
+            addCopyButtons();
         }
 
+        // Function to add copy buttons to all <pre> elements
         function addCopyButtons() {
             const preElements = document.querySelectorAll("pre");
             preElements.forEach(pre => {
@@ -585,47 +549,27 @@
             });
         }
 
+        // Function to copy text to clipboard and handle icon color change
         function copyToClipboard(text, button) {
-            // Remove extra spaces and newlines above and below the code
+            // Trim extra newlines at the beginning and end of the code block
             const trimmedText = text.trim();
             
+            // Write trimmed text to the clipboard
             navigator.clipboard.writeText(trimmedText).then(() => {
+                // Change icon color to black and revert after 3 seconds
                 button.classList.add("copied");
                 setTimeout(() => {
                     button.classList.remove("copied");
-                }, 5000); // Remove the green class after 3 seconds
+                }, 3000); // Remove the black color after 3 seconds
             });
         }
 
-        function goBack() {
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("folderName").style.display = "none";
-            document.getElementById("readmeContent").style.display = "none";
-            document.getElementById("courseContainer").style.display = "block";
-        }
-
-        async function displayFolders() {
-            const container = document.querySelector(".folder-container");
-            container.innerHTML = "Loading...";
-            const folders = await fetchFolders();
-            container.innerHTML = "";
-
-            folders.forEach(folder => {
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
-                folderDiv.innerHTML = `
-                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
-                    <h3>${folder.name}</h3>
-                `;
-                folderDiv.onclick = () => loadFolderContents(folder.name);
-                container.appendChild(folderDiv);
-            });
-        }
-
-        displayFolders();
+        // Initialize
+        displayCourses();
     </script>
 </body>
 </html>
+
 
 
 
