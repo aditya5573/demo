@@ -510,9 +510,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 </head>
 <body>
-    <header>
+    <header id="mainHeader">Course Portal</header>
+<!--     <header>
         <h1>Course Portal</h1>
-    </header>
+    </header> -->
     
     <div id="courseContainer" class="container">
         <div class="course-header">Available Courses</div>
@@ -532,6 +533,7 @@
     <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
 
     <script>
+        const mainHeader = document.getElementById('mainHeader');
         const repoOwner = "aditya5573";
         const repoName = "demo";
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
@@ -639,6 +641,7 @@
             document.getElementById("readmeContent").style.display = "none";
             document.getElementById("courseContainer").style.display = "block";
             document.getElementById("nextButton").style.display = "none";
+            mainHeader.style.display = 'block';
         }
 
         function loadNextFile() {
@@ -654,6 +657,7 @@
         }
 
         async function displayFolders() {
+            mainHeader.style.display = 'none';
             const container = document.querySelector(".folder-container");
             container.innerHTML = "Loading...";
             const folders = await fetchFolders();
