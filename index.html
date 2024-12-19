@@ -330,24 +330,18 @@
             background-color: #f9f9f9;
         }
 
-        header {
-            padding: 10px 20px;
-            text-align: center;
-            background-color: #0073e6;
-            color: white;
-        }
-
         .container {
             padding: 20px;
         }
 
-        .title {
+        .course-header {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            color: #333;
         }
 
-        #courseContainer {
+        .folder-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
@@ -359,12 +353,12 @@
             padding: 15px;
             text-align: center;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 150px;
+            width: 150px; /* Adjusted folder size */
             cursor: pointer;
         }
 
         .folder img {
-            width: 40px;
+            width: 40px; /* Adjusted icon size */
             height: 40px;
         }
 
@@ -379,6 +373,7 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
+            z-index: 1000;
         }
 
         .back:hover {
@@ -386,10 +381,11 @@
         }
 
         #folderName {
-            margin-top: 20px;
+            margin-top: 60px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
+            color: #333;
         }
 
         .content-wrapper {
@@ -447,13 +443,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Course Portal</h1>
-    </header>
-
-    <div class="container">
-        <div class="title">Available Courses</div>
-        <div id="courseContainer"></div>
+    <div id="courseContainer" class="container">
+        <div class="course-header">Available Courses</div>
+        <div class="folder-container"></div>
     </div>
 
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
@@ -501,8 +493,11 @@
                 const listItem = document.createElement("li");
                 const link = document.createElement("a");
                 link.textContent = file.name;
-                link.href = file.download_url; // Opens file in a new tab
-                link.target = "_blank";
+                link.href = "#";
+                link.onclick = () => {
+                    loadFileContent(file, link);
+                    return false;
+                };
 
                 if (index === 0) {
                     link.classList.add("active");
@@ -530,11 +525,11 @@
             document.getElementById("backButton").style.display = "none";
             document.getElementById("folderName").style.display = "none";
             document.getElementById("readmeContent").style.display = "none";
-            document.getElementById("courseContainer").style.display = "flex";
+            document.getElementById("courseContainer").style.display = "block";
         }
 
         async function displayFolders() {
-            const container = document.getElementById("courseContainer");
+            const container = document.querySelector(".folder-container");
             container.innerHTML = "Loading...";
             const folders = await fetchFolders();
             container.innerHTML = "";
