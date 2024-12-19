@@ -329,83 +329,137 @@
             background-color: #f9f9f9;
         }
 
-        header {
-            background-color: #0073e6;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
         .container {
+            padding: 20px;
+        }
+
+        .course-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .folder-container {
             display: flex;
             flex-wrap: wrap;
-            padding: 20px;
+            gap: 15px;
         }
 
         .folder {
             background-color: white;
             border: 1px solid #ddd;
-            margin: 10px;
             padding: 15px;
             text-align: center;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 200px;
+            width: 150px;
             cursor: pointer;
         }
 
         .folder img {
-            width: 50px;
-            height: 50px;
-        }
-
-        .folder h3 {
-            margin: 10px 0 5px;
-            font-size: 18px;
-        }
-
-        .folder p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        h2 {
-            color: #0073e6;
-            margin-top: 20px;
-        }
-
-        pre {
-            background-color: #f4f4f4;
-            border-left: 3px solid #0073e6;
-            padding: 10px;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            position: relative;
+            width: 40px;
+            height: 40px;
         }
 
         .back {
-            margin-bottom: 20px;
-            display: inline-block;
-            color: #0073e6;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 15px;
             text-decoration: none;
+            border-radius: 5px;
             font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .back:hover {
+            background-color: #005bb5;
+        }
+
+        #folderName {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .content-wrapper {
+            display: flex;
+            height: 100vh;
+            background-color: #e0e0e0;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-y: auto;
+            border-right: 1px solid #ccc;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin: 5px 0;
+        }
+
+        .file-list a {
+            text-decoration: none;
+            color: #0073e6;
+            padding: 5px 10px;
+            display: block;
+            border-radius: 3px;
+        }
+
+        .file-list a.active {
+            background-color: yellow;
+        }
+
+        .file-list a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .markdown-content {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        pre {
+            position: relative;
+            padding: 10px;
+            background: #f4f4f4;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        pre code {
+            display: block;
+            overflow-x: auto;
         }
 
         .copy-icon {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             background: none;
             border: none;
             cursor: pointer;
-            transition: fill 0.3s ease;
         }
 
         .copy-icon svg {
@@ -416,125 +470,106 @@
         }
 
         .copy-icon.copied svg {
-            fill: black; /* Black color after clicking */
+            fill: #000000; /* Black color */
         }
 
         .copy-icon:hover svg {
             fill: #005bb5;
         }
-
-        .folder-container-title {
-            font-weight: bold;
-            color: #0073e6;
-            margin-bottom: 20px;
-            text-align: left;
-            width: 100%;
-        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 </head>
 <body>
-    <header>
-        <h1>Course Portal</h1>
-    </header>
-
     <div id="courseContainer" class="container">
-        <div class="folder-container-title">Available Courses</div>
+        <div class="course-header">Available Courses</div>
+        <div class="folder-container"></div>
     </div>
 
-    <div id="readmeContent" class="content" style="display: none;">
-        <a href="#" class="back" onclick="goBack()">&#8592; Back</a>
-        <div id="folderTitle"></div>
-        <div id="indexContent"></div>
-        <div id="codeContent"></div>
+    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
+    <h2 id="folderName" style="display: none;"></h2>
+
+    <div id="readmeContent" class="content-wrapper" style="display: none;">
+        <div class="sidebar">
+            <ul class="file-list" id="fileList"></ul>
+        </div>
+        <div class="main-content" id="fileContent"></div>
     </div>
 
     <script>
-        const courses = [
-            { name: "chaos", description: "Learn about chaos engineering and how to inject faults in a controlled way." },
-            { name: "container-and-kubernetes-security", description: "Enhance container and Kubernetes security with best practices." },
-            { name: "kubernetes-101", description: "Join our hands-on Kubernetes workshop to learn basic concepts and deployments." }
-        ];
+        const repoOwner = "aditya5573"; // Replace with your GitHub username
+        const repoName = "demo"; // Replace with your repository name
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
-        // Dynamically generate folder cards
-        function displayCourses() {
-            const container = document.getElementById("courseContainer");
-            container.innerHTML = "";
+        const markdownConverter = new showdown.Converter();
 
-            const title = document.createElement("div");
-            title.className = "folder-container-title";
-            title.innerText = "Available Courses";
-            container.appendChild(title);
+        async function fetchFolders() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            return data.filter(item => item.type === "dir");
+        }
 
-            courses.forEach(course => {
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
-                folderDiv.innerHTML = `
-                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
-                    <h3>${course.name}</h3>
-                    <p>${truncateDescription(course.description, 15)}</p>
-                `;
-                folderDiv.onclick = () => loadFolder(course.name);
-                container.appendChild(folderDiv);
+        async function loadFolderContents(folderName) {
+            const folderUrl = `${apiUrl}/${folderName}`;
+            const response = await fetch(folderUrl);
+            const files = await response.json();
+            const mdFiles = files.filter(file => file.name.endsWith(".md"));
+
+            document.getElementById("backButton").style.display = "block";
+            document.getElementById("folderName").style.display = "block";
+            document.getElementById("folderName").textContent = folderName;
+            document.getElementById("readmeContent").style.display = "flex";
+            document.getElementById("courseContainer").style.display = "none";
+
+            const sidebar = document.getElementById("fileList");
+            const contentArea = document.getElementById("fileContent");
+
+            sidebar.innerHTML = "";
+            contentArea.innerHTML = "";
+
+            mdFiles.forEach((file, index) => {
+                const listItem = document.createElement("li");
+                const link = document.createElement("a");
+                link.textContent = file.name;
+                link.href = "#";
+                link.onclick = () => {
+                    loadFileContent(file, link);
+                    return false;
+                };
+
+                if (index === 0) {
+                    link.classList.add("active");
+                    loadFileContent(file, link);
+                }
+
+                listItem.appendChild(link);
+                sidebar.appendChild(listItem);
             });
         }
 
-        // Truncate description to 15 words
-        function truncateDescription(desc, limit) {
-            return desc.split(" ").slice(0, limit).join(" ") + "...";
-        }
+        async function loadFileContent(file, link) {
+            const response = await fetch(file.download_url);
+            const content = await response.text();
 
-        // Load folder content
-        function loadFolder(courseName) {
-            document.getElementById("courseContainer").style.display = "none";
-            const readmeDiv = document.getElementById("readmeContent");
-            readmeDiv.style.display = "block";
+            document.querySelectorAll(".file-list a").forEach(a => a.classList.remove("active"));
+            link.classList.add("active");
 
-            const folderTitle = document.getElementById("folderTitle");
-            folderTitle.innerHTML = `<h1><b>${courseName}</b></h1>`;
-
-            loadIndexAndCode(courseName);
-        }
-
-        // Go back to course list view
-        function goBack() {
-            document.getElementById("readmeContent").style.display = "none";
-            document.getElementById("courseContainer").style.display = "flex";
-        }
-
-        // Load the index and code content for a folder (simulated for this example)
-        function loadIndexAndCode(courseName) {
-            const indexContent = document.getElementById("indexContent");
-            const codeContent = document.getElementById("codeContent");
-
-            // Simulated index (can be dynamic if integrating with a backend)
-            indexContent.innerHTML = `
-                <h2>Index</h2>
-                <ul>
-                    <li><a href="#module1" onclick="loadModule('Module 1')">Module 1</a></li>
-                    <li><a href="#module2" onclick="loadModule('Module 2')">Module 2</a></li>
-                    <li><a href="#module3" onclick="loadModule('Module 3')">Module 3</a></li>
-                </ul>
-            `;
-
-            // Simulated code block
-            codeContent.innerHTML = `
-                <h2>Code for ${courseName}</h2>
-                <pre><code>console.log("Hello World");</code></pre>
-            `;
+            const contentArea = document.getElementById("fileContent");
+            const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
+            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
             addCopyButtons();
+            document.querySelectorAll("pre code").forEach((el) => {
+                hljs.highlightElement(el);
+            });
         }
 
-        // Load specific module content (simulated for this example)
-        function loadModule(moduleName) {
-            const codeContent = document.getElementById("codeContent");
-            codeContent.innerHTML = `
-                <h2>${moduleName} Code</h2>
-                <pre><code>console.log("${moduleName} Module Code");</code></pre>
-            `;
-            addCopyButtons();
+        function formatCodeBlocks(content) {
+            return content.replace(/```([\s\S]*?)```/g, (match, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`; // Trim code to remove extra newlines
+            });
         }
 
-        // Function to add copy buttons to all <pre> elements
         function addCopyButtons() {
             const preElements = document.querySelectorAll("pre");
             preElements.forEach(pre => {
@@ -544,19 +579,13 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M8 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H8zm-4 4h2v12h10v2H6a2 2 0 0 1-2-2V8z"/>
                     </svg>`;
-                button.onclick = () => copyToClipboard(pre.innerText, button);
+                button.onclick = () => copyToClipboard(pre.innerText.trim(), button); // Trim extra spaces/newlines
                 pre.appendChild(button);
             });
         }
 
-        // Function to copy text to clipboard and handle icon color change
         function copyToClipboard(text, button) {
-            // Trim extra newlines at the beginning and end of the code block
-            const trimmedText = text.trim();
-            
-            // Write trimmed text to the clipboard
-            navigator.clipboard.writeText(trimmedText).then(() => {
-                // Change icon color to black and revert after 3 seconds
+            navigator.clipboard.writeText(text).then(() => {
                 button.classList.add("copied");
                 setTimeout(() => {
                     button.classList.remove("copied");
@@ -564,11 +593,36 @@
             });
         }
 
-        // Initialize
-        displayCourses();
+        function goBack() {
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("folderName").style.display = "none";
+            document.getElementById("readmeContent").style.display = "none";
+            document.getElementById("courseContainer").style.display = "block";
+        }
+
+        async function displayFolders() {
+            const container = document.querySelector(".folder-container");
+            container.innerHTML = "Loading...";
+            const folders = await fetchFolders();
+            container.innerHTML = "";
+
+            folders.forEach(folder => {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                folderDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                    <h3>${folder.name}</h3>
+                `;
+                folderDiv.onclick = () => loadFolderContents(folder.name);
+                container.appendChild(folderDiv);
+            });
+        }
+
+        displayFolders();
     </script>
 </body>
 </html>
+
 
 
 
