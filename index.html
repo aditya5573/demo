@@ -506,22 +506,15 @@
             background-color: #005bb5;
         }
 
-        /* Search Bar */
         .search-bar {
             position: absolute;
-            top: 10px;
+            top: 20px;
             right: 20px;
-            padding: 8px;
-            font-size: 14px;
-            border-radius: 5px;
+            padding: 10px;
             border: 1px solid #ddd;
-            width: 200px;
-            background-color: #fff;
-        }
-
-        .folder.highlighted {
-            border: 2px solid #0073e6;
-            background-color: #f0f8ff;
+            border-radius: 5px;
+            width: 250px;
+            font-size: 16px;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -533,12 +526,10 @@
         Course Portal
     </div>
 
-    <!-- Search Bar -->
-    <input type="text" id="folderSearch" class="search-bar" placeholder="Search Folder" oninput="searchFolders()" />
-
     <div id="courseContainer" class="container">
         <div class="course-header">Available Courses</div>
-        <div class="folder-container" id="folderContainer"></div>
+        <input type="text" class="search-bar" id="searchBar" placeholder="Search for a folder" oninput="searchFolder()" />
+        <div class="folder-container"></div>
     </div>
 
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
@@ -561,7 +552,7 @@
         const markdownConverter = new showdown.Converter();
         let currentFileIndex = 0;
         let mdFiles = [];
-        let allFolders = [];
+        let folders = [];
 
         async function fetchFolders() {
             const response = await fetch(apiUrl);
@@ -668,38 +659,31 @@
             if (currentFileIndex < mdFiles.length - 1) {
                 currentFileIndex++;
                 const nextFile = mdFiles[currentFileIndex];
-                const nextLink = document.querySelectorAll(".file-list a")[currentFileIndex];
+                const sidebarLinks = document.querySelectorAll(".file-list a");
+                sidebarLinks.forEach(link => link.classList.remove("active"));
+                const nextLink = sidebarLinks[currentFileIndex];
+                nextLink.classList.add("active");
                 loadFileContent(nextFile, nextLink);
             }
         }
 
-        function searchFolders() {
-            const searchTerm = document.getElementById("folderSearch").value.toLowerCase();
-            const folderDivs = document.querySelectorAll(".folder");
-
-            folderDivs.forEach(folder => {
+        function searchFolder() {
+            const searchQuery = document.getElementById("searchBar").value.toLowerCase();
+            const folders = document.querySelectorAll(".folder");
+            folders.forEach(folder => {
                 const folderName = folder.querySelector("h3").textContent.toLowerCase();
-                if (folderName.includes(searchTerm)) {
+                if (folderName.includes(searchQuery)) {
                     folder.style.display = "block";
                 } else {
                     folder.style.display = "none";
                 }
             });
-
-            const highlightedFolder = Array.from(folderDivs).find(folder => {
-                const folderName = folder.querySelector("h3").textContent.toLowerCase();
-                return folderName.includes(searchTerm);
-            });
-
-            if (highlightedFolder) {
-                highlightedFolder.classList.add("highlighted");
-            }
         }
 
         async function displayFolders() {
             const container = document.querySelector(".folder-container");
             container.innerHTML = "Loading...";
-            const folders = await fetchFolders();
+            folders = await fetchFolders();
             container.innerHTML = "";
 
             folders.forEach(folder => {
@@ -718,8 +702,6 @@
     </script>
 </body>
 </html>
-
-
 
 
 
