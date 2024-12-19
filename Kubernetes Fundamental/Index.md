@@ -1,7 +1,7 @@
 # Kubernetes Training Index
 
 <details>
-  <summary><a href="./Module1_Introduction_to_Kubernetes.md">1. Introduction to Kubernetes</a></summary>
+  <summary>1. Introduction to Kubernetes</summary>
   <ul>
     <li>What is Kubernetes?</li>
     <li>Core Concepts</li>
@@ -10,7 +10,7 @@
 </details>
 
 <details>
-  <summary><a href="./Module2_Kubernetes_Basics.md">2. Kubernetes Basics</a></summary>
+  <summary>2. Kubernetes Basics</summary>
   <ul>
     <li>Cluster Components</li>
     <li>Understanding YAML Configuration Files</li>
