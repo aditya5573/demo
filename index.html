@@ -347,6 +347,7 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
+            z-index: 1000;
         }
 
         .back:hover {
@@ -405,18 +406,26 @@
             border-radius: 5px;
         }
 
-        .dropdown {
-            margin: 5px 0;
+        .folder {
+            background-color: white;
+            border: 1px solid #ddd;
+            margin: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            width: 150px; /* Reduced size */
+            cursor: pointer;
         }
 
-        .dropdown .subtopics {
-            margin-left: 10px;
-            padding-left: 15px;
+        .folder img {
+            width: 40px; /* Reduced icon size */
+            height: 40px;
         }
 
         .dropdown .subtopics a {
             display: block;
             margin: 2px 0;
+            padding-left: 15px; /* Reduced spacing */
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -435,8 +444,8 @@
     </div>
 
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
+        const repoOwner = "your-github-username"; // Replace with your GitHub username
+        const repoName = "your-repo-name"; // Replace with your repository name
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
         const markdownConverter = new showdown.Converter();
@@ -486,6 +495,20 @@
                 listItem.appendChild(link);
                 sidebar.appendChild(listItem);
             });
+
+            // Link modules in Index.md dynamically
+            const indexFile = mdFiles.find(file => file.name === "Index.md");
+            if (indexFile) {
+                const response = await fetch(indexFile.download_url);
+                const indexContent = await response.text();
+                const linkedContent = indexContent.replace(
+                    /\[(.+?)\]\((.+?)\)/g,
+                    (_, moduleName, moduleFile) =>
+                        `<a href="#" onclick="openModule('${moduleFile}')">${moduleName}</a>`
+                );
+                const contentHtml = markdownConverter.makeHtml(linkedContent);
+                document.getElementById("fileContent").innerHTML = `<div class="markdown-content">${contentHtml}</div>`;
+            }
         }
 
         // Load and display content of a specific file
@@ -500,19 +523,15 @@
             const contentArea = document.getElementById("fileContent");
             const htmlContent = markdownConverter.makeHtml(content);
             contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
+        }
 
-            // Make module names clickable
-            document.querySelectorAll(".markdown-content a").forEach(anchor => {
-                anchor.onclick = async (event) => {
-                    event.preventDefault();
-                    const fileName = anchor.textContent.trim();
-                    const matchedFile = Array.from(document.querySelectorAll(".file-list a"))
-                        .find(link => link.textContent.trim() === fileName);
-                    if (matchedFile) {
-                        matchedFile.click();
-                    }
-                };
-            });
+        // Open module files linked in Index.md
+        async function openModule(moduleFile) {
+            const sidebarLinks = document.querySelectorAll(".file-list a");
+            const matchedLink = Array.from(sidebarLinks).find(link =>
+                link.textContent.trim() === moduleFile
+            );
+            if (matchedLink) matchedLink.click();
         }
 
         // Go back to the folder view
