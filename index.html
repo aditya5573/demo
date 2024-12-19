@@ -315,8 +315,6 @@
 
 
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -331,11 +329,20 @@
             background-color: #f9f9f9;
         }
 
+        .course-header {
+            background-color: #0073e6;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
         .container {
             padding: 20px;
         }
 
-        .course-header {
+        .course-title {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -346,6 +353,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            margin-top: 20px;
         }
 
         .folder {
@@ -439,207 +447,15 @@
             border: 1px solid #ccc;
             padding: 15px;
             border-radius: 5px;
-            position: relative;
-        }
-
-        pre {
-            position: relative;
-            padding: 10px;
-            background: #f4f4f4;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        pre code {
-            display: block;
-            overflow-x: auto;
-        }
-
-        .copy-icon {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .copy-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: #0073e6;
-            transition: fill 0.3s ease, transform 0.3s ease;
-        }
-
-        .copy-icon.copied svg {
-            fill: #000000; /* Fully black color */
-            transform: scale(1.1); /* Slight scale for effect */
-        }
-
-        .copy-icon:hover svg {
-            fill: #005bb5;
-        }
-
-        .next-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #0073e6;
-            color: white;
-            padding: 10px 15px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            display: none;
-            z-index: 1000;
-        }
-
-        .next-button:hover {
-            background-color: #005bb5;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
-</head>
-<body>
-    <div id="courseContainer" class="container">
-        <div class="course-header">Available Courses</div>
-        <div class="folder-container"></div>
-    </div>
-
-    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
-    <h2 id="folderName" style="display: none;"></h2>
-
-    <div id="readmeContent" class="content-wrapper" style="display: none;">
-        <div class="sidebar">
-            <ul class="file-list" id="fileList"></ul>
-        </div>
-        <div class="main-content" id="fileContent"></div>
-    </div>
-
-    <button class="next-button" id="nextButton" onclick="loadNextFile()">Next</button>
-
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
-        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
-
-        const markdownConverter = new showdown.Converter();
-        let currentFileIndex = 0;
-        let mdFiles = [];
+        const apiUrl = `https://api.github.com/repos/your-username/your-repo/contents`;
 
         async function fetchFolders() {
             const response = await fetch(apiUrl);
             const data = await response.json();
             return data.filter(item => item.type === "dir");
-        }
-
-        async function loadFolderContents(folderName) {
-            const folderUrl = `${apiUrl}/${folderName}`;
-            const response = await fetch(folderUrl);
-            const files = await response.json();
-            mdFiles = files.filter(file => file.name.endsWith(".md"));
-
-            document.getElementById("backButton").style.display = "block";
-            document.getElementById("folderName").style.display = "block";
-            document.getElementById("folderName").textContent = folderName;
-            document.getElementById("readmeContent").style.display = "flex";
-            document.getElementById("courseContainer").style.display = "none";
-
-            const sidebar = document.getElementById("fileList");
-            const contentArea = document.getElementById("fileContent");
-
-            sidebar.innerHTML = "";
-            contentArea.innerHTML = "";
-
-            mdFiles.forEach((file, index) => {
-                const listItem = document.createElement("li");
-                const link = document.createElement("a");
-                link.textContent = file.name;
-                link.href = "#";
-                link.onclick = () => {
-                    loadFileContent(file, link);
-                    return false;
-                };
-
-                if (index === 0) {
-                    link.classList.add("active");
-                    loadFileContent(file, link);
-                }
-
-                listItem.appendChild(link);
-                sidebar.appendChild(listItem);
-            });
-
-            document.getElementById("nextButton").style.display = "block"; // Show next button
-        }
-
-        async function loadFileContent(file, link) {
-            const response = await fetch(file.download_url);
-            const content = await response.text();
-
-            document.querySelectorAll(".file-list a").forEach(a => a.classList.remove("active"));
-            link.classList.add("active");
-
-            const contentArea = document.getElementById("fileContent");
-            const htmlContent = markdownConverter.makeHtml(formatCodeBlocks(content));
-            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
-            addCopyButtons();
-            document.querySelectorAll("pre code").forEach((el) => {
-                hljs.highlightElement(el);
-            });
-
-            currentFileIndex = mdFiles.indexOf(file); // Set current file index
-        }
-
-        function formatCodeBlocks(content) {
-            return content.replace(/```([\s\S]*?)```/g, (match, code) => {
-                return `<pre><code>${code.trim()}</code></pre>`; // Trim code to remove extra newlines
-            });
-        }
-
-        function addCopyButtons() {
-            const preElements = document.querySelectorAll("pre");
-            preElements.forEach(pre => {
-                const button = document.createElement("button");
-                button.className = "copy-icon";
-                button.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M8 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H8zm-4 4h2v12h10v2H6a2 2 0 0 1-2-2V8z"/>
-                    </svg>`;
-                button.onclick = () => copyToClipboard(pre.innerText.trim(), button); // Trim extra spaces/newlines
-                pre.appendChild(button);
-            });
-        }
-
-        function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                button.classList.add("copied");
-                setTimeout(() => {
-                    button.classList.remove("copied");
-                }, 3000); // Remove the black color after 3 seconds
-            });
-        }
-
-        function goBack() {
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("folderName").style.display = "none";
-            document.getElementById("readmeContent").style.display = "none";
-            document.getElementById("courseContainer").style.display = "block";
-            document.getElementById("nextButton").style.display = "none"; // Hide next button
-        }
-
-        function loadNextFile() {
-            if (currentFileIndex < mdFiles.length - 1) {
-                currentFileIndex++;
-                const nextFile = mdFiles[currentFileIndex];
-                const sidebarLinks = document.querySelectorAll(".file-list a");
-                sidebarLinks.forEach(link => link.classList.remove("active"));
-                const nextLink = sidebarLinks[currentFileIndex];
-                nextLink.classList.add("active");
-                loadFileContent(nextFile, nextLink);
-            }
         }
 
         async function displayFolders() {
@@ -660,8 +476,44 @@
             });
         }
 
-        displayFolders();
+        async function loadFolderContents(folderName) {
+            const folderUrl = `${apiUrl}/${folderName}`;
+            const response = await fetch(folderUrl);
+            const files = await response.json();
+
+            document.querySelector(".course-header").style.display = "none"; // Hide dashboard strip
+            document.getElementById("folderName").style.display = "block";
+            document.getElementById("folderName").textContent = folderName;
+            document.getElementById("courseContainer").style.display = "none";
+            document.getElementById("readmeContent").style.display = "flex";
+        }
+
+        function goBack() {
+            document.querySelector(".course-header").style.display = "block"; // Show dashboard strip
+            document.getElementById("folderName").style.display = "none";
+            document.getElementById("courseContainer").style.display = "block";
+            document.getElementById("readmeContent").style.display = "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            displayFolders();
+        });
     </script>
+</head>
+<body>
+    <div class="course-header">Course Dashboard</div>
+
+    <div id="courseContainer" class="container">
+        <div class="course-title">Available Courses</div>
+        <div class="folder-container"></div>
+    </div>
+
+    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
+    <h2 id="folderName" style="display: none;"></h2>
+
+    <div id="readmeContent" class="content-wrapper" style="display: none;">
+        <!-- Sidebar and Content Area -->
+    </div>
 </body>
 </html>
 
