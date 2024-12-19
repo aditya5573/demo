@@ -321,74 +321,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linux and Docker Fundamentals</title>
+    <title>Course Portal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
         }
-        h1, h2 {
-            color: #2c3e50;
+
+        .content-wrapper {
+            display: flex;
+            height: 100vh;
+            background-color: #e0e0e0;
         }
-        ul {
-            padding-left: 20px;
+
+        .back {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        li {
-            margin-bottom: 10px;
+
+        .back:hover {
+            background-color: #005bb5;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-y: auto;
+            border-right: 1px solid #ccc;
+        }
+
+        .sidebar h2 {
+            margin: 0 0 10px;
+            padding: 10px;
+            background-color: #ddd;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin: 5px 0;
+        }
+
+        .file-list a {
+            text-decoration: none;
+            color: #0073e6;
+            padding: 5px 10px;
+            display: block;
+            border-radius: 3px;
+        }
+
+        .file-list a.active {
+            background-color: yellow;
+        }
+
+        .file-list a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .markdown-content {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .dropdown {
+            margin: 5px 0;
+        }
+
+        .dropdown .subtopics {
+            margin-left: 10px;
+            padding-left: 15px;
+        }
+
+        .dropdown .subtopics a {
+            display: block;
+            margin: 2px 0;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Linux and Docker Fundamentals Training Index</h1>
-    </header>
+    <div id="courseContainer" class="container"></div>
 
-    <main>
-        <section>
-            <h2>Module 1: Introduction to Linux and Docker</h2>
-            <h3>Overview of Linux and Open Source</h3>
-            <p>Linux is a powerful and versatile operating system that serves as the backbone of modern computing, especially in server and cloud environments. It's open-source, which means its source code is freely available for anyone to view, modify, and distribute.</p>
+    <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
 
-            <h4>Key Characteristics of Linux:</h4>
-            <ul>
-                <li><strong>Open Source:</strong> Developed collaboratively by contributors worldwide under licenses like the GPL (GNU General Public License).</li>
-                <li><strong>Lightweight and Scalable:</strong> Suitable for everything from IoT devices to supercomputers.</li>
-                <li><strong>Reliable and Secure:</strong> Known for its robustness and strong community-driven security updates.</li>
-            </ul>
+    <div id="readmeContent" class="content-wrapper" style="display: none;">
+        <div class="sidebar">
+            <h2 id="folderName"></h2>
+            <ul class="file-list" id="fileList"></ul>
+        </div>
+        <div class="main-content" id="fileContent"></div>
+    </div>
 
-            <h4>Why Open Source Matters:</h4>
-            <ul>
-                <li><strong>Community-Driven Innovation:</strong> Developers from across the globe contribute to projects, driving rapid improvements.</li>
-                <li><strong>Cost-Effective:</strong> Open-source software is typically free, reducing costs for businesses.</li>
-                <li><strong>Transparency:</strong> The open nature of the code ensures accountability and security.</li>
-            </ul>
+    <script>
+        const repoOwner = "aditya5573"; // Replace with your GitHub username
+        const repoName = "demo"; // Replace with your repository name
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
-            <h3>What is Docker?</h3>
-            <p>Docker is a platform that allows developers to build, ship, and run applications inside lightweight, portable, and self-sufficient containers.</p>
+        const markdownConverter = new showdown.Converter();
 
-            <h4>Core Concepts:</h4>
-            <ul>
-                <li><strong>Containerization:</strong> Encapsulates an application and its dependencies (libraries, binaries, configuration files).</li>
-                <li><strong>Portability:</strong> Docker containers ensure that your application behaves the same way across environments.</li>
-                <li><strong>Lightweight:</strong> Containers share the host OS kernel, making them faster and more resource-efficient than traditional virtual machines.</li>
-            </ul>
+        // Fetch the list of folders dynamically from GitHub
+        async function fetchFolders() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            return data.filter(item => item.type === "dir");
+        }
 
-            <h4>Docker Components:</h4>
-            <ol>
-                <li><strong>Docker Engine:</strong> The core component responsible for creating and managing containers.</li>
-                <li><strong>Docker Images:</strong> Read-only templates used to create containers.</li>
-                <li><strong>Docker Containers:</strong> Instances of Docker images that can be executed.</li>
-                <li><strong>Docker Hub:</strong> A centralized registry for sharing and pulling Docker images.</li>
-            </ol>
-        </section>
-    </main>
+        // Fetch folder contents and display
+        async function loadFolderContents(folderName) {
+            const folderUrl = `${apiUrl}/${folderName}`;
+            const response = await fetch(folderUrl);
+            const files = await response.json();
 
-    <footer>
-        <p>&copy; 2024 Linux Docker Fundamentals Training</p>
-    </footer>
+            const mdFiles = files.filter(file => file.name.endsWith(".md"));
+
+            document.getElementById("backButton").style.display = "block";
+            document.getElementById("readmeContent").style.display = "flex";
+            document.getElementById("courseContainer").style.display = "none";
+
+            const sidebar = document.getElementById("fileList");
+            const folderTitle = document.getElementById("folderName");
+            const contentArea = document.getElementById("fileContent");
+
+            folderTitle.textContent = folderName;
+            sidebar.innerHTML = "";
+            contentArea.innerHTML = "";
+
+            mdFiles.forEach((file, index) => {
+                const listItem = document.createElement("li");
+                const link = document.createElement("a");
+                link.textContent = file.name;
+                link.href = "#";
+                link.onclick = () => {
+                    loadFileContent(file, link);
+                    return false;
+                };
+
+                if (index === 0) {
+                    link.classList.add("active");
+                    loadFileContent(file, link);
+                }
+
+                listItem.appendChild(link);
+                sidebar.appendChild(listItem);
+            });
+        }
+
+        // Load and display content of a specific file
+        async function loadFileContent(file, link) {
+            const response = await fetch(file.download_url);
+            const content = await response.text();
+
+            const links = document.querySelectorAll(".file-list a");
+            links.forEach(a => a.classList.remove("active"));
+            link.classList.add("active");
+
+            const contentArea = document.getElementById("fileContent");
+            const htmlContent = markdownConverter.makeHtml(content);
+            contentArea.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
+
+            // Make module names clickable
+            document.querySelectorAll(".markdown-content a").forEach(anchor => {
+                anchor.onclick = async (event) => {
+                    event.preventDefault();
+                    const fileName = anchor.textContent.trim();
+                    const matchedFile = Array.from(document.querySelectorAll(".file-list a"))
+                        .find(link => link.textContent.trim() === fileName);
+                    if (matchedFile) {
+                        matchedFile.click();
+                    }
+                };
+            });
+        }
+
+        // Go back to the folder view
+        function goBack() {
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("readmeContent").style.display = "none";
+            document.getElementById("courseContainer").style.display = "flex";
+        }
+
+        // Display folder cards
+        async function displayFolders() {
+            const container = document.getElementById("courseContainer");
+            container.innerHTML = "Loading...";
+            const folders = await fetchFolders();
+            container.innerHTML = "";
+
+            folders.forEach(folder => {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                folderDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="folder icon">
+                    <h3>${folder.name}</h3>
+                `;
+                folderDiv.onclick = () => loadFolderContents(folder.name);
+                container.appendChild(folderDiv);
+            });
+        }
+
+        // Initialize the portal
+        displayFolders();
+    </script>
 </body>
 </html>
+
 
 
 
