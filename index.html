@@ -330,15 +330,47 @@
             background-color: #f9f9f9;
         }
 
-        .content-wrapper {
+        header {
+            padding: 10px 20px;
+            text-align: center;
+            background-color: #0073e6;
+            color: white;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #courseContainer {
             display: flex;
-            height: 100vh;
-            background-color: #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .folder {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            cursor: pointer;
+        }
+
+        .folder img {
+            width: 40px;
+            height: 40px;
         }
 
         .back {
-            position: absolute; /* Ensures the button is placed relative to the page */
-            top: 20px; /* Adjusted to avoid overlapping with the folder name */
+            position: absolute;
+            top: 20px;
             left: 20px;
             background-color: #0073e6;
             color: white;
@@ -347,7 +379,6 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            z-index: 1000;
         }
 
         .back:hover {
@@ -355,10 +386,16 @@
         }
 
         #folderName {
-            margin-top: 60px; /* Provides spacing to avoid overlap with the back button */
-            text-align: center; /* Center-align folder name */
+            margin-top: 20px;
+            text-align: center;
             font-size: 24px;
             font-weight: bold;
+        }
+
+        .content-wrapper {
+            display: flex;
+            height: 100vh;
+            background-color: #e0e0e0;
         }
 
         .sidebar {
@@ -367,12 +404,6 @@
             padding: 10px;
             overflow-y: auto;
             border-right: 1px solid #ccc;
-        }
-
-        .sidebar h2 {
-            margin: 0 0 10px;
-            padding: 10px;
-            background-color: #ddd;
         }
 
         .file-list {
@@ -412,33 +443,18 @@
             padding: 15px;
             border-radius: 5px;
         }
-
-        .folder {
-            background-color: white;
-            border: 1px solid #ddd;
-            margin: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 150px; /* Adjusted folder size */
-            cursor: pointer;
-        }
-
-        .folder img {
-            width: 40px; /* Adjusted icon size */
-            height: 40px;
-        }
-
-        .dropdown .subtopics a {
-            display: block;
-            margin: 2px 0;
-            padding-left: 15px; /* Reduced spacing */
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 </head>
 <body>
-    <div id="courseContainer" class="container"></div>
+    <header>
+        <h1>Course Portal</h1>
+    </header>
+
+    <div class="container">
+        <div class="title">Available Courses</div>
+        <div id="courseContainer"></div>
+    </div>
 
     <a href="#" class="back" style="display: none;" id="backButton" onclick="goBack()">&#8592; Back</a>
     <h2 id="folderName" style="display: none;"></h2>
@@ -451,8 +467,8 @@
     </div>
 
     <script>
-        const repoOwner = "aditya5573"; // Replace with your GitHub username
-        const repoName = "demo"; // Replace with your repository name
+        const repoOwner = "your-github-username"; // Replace with your GitHub username
+        const repoName = "your-repo-name"; // Replace with your repository name
         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
 
         const markdownConverter = new showdown.Converter();
@@ -485,11 +501,8 @@
                 const listItem = document.createElement("li");
                 const link = document.createElement("a");
                 link.textContent = file.name;
-                link.href = "#";
-                link.onclick = () => {
-                    loadFileContent(file, link);
-                    return false;
-                };
+                link.href = file.download_url; // Opens file in a new tab
+                link.target = "_blank";
 
                 if (index === 0) {
                     link.classList.add("active");
@@ -542,6 +555,7 @@
     </script>
 </body>
 </html>
+
 
 
 
