@@ -68,5 +68,3 @@ Docker has revolutionized software development and deployment by simplifying pro
 
 Linux and Docker form the foundation of modern application development and deployment. While Linux provides a robust and secure environment, Docker brings portability, scalability, and efficiency to development workflows. Together, they enable businesses to innovate faster, reduce costs, and deliver consistent, high-quality software.
 
----
-
