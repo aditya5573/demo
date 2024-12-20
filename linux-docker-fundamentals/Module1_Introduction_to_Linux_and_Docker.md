@@ -70,4 +70,3 @@ Linux and Docker form the foundation of modern application development and deplo
 
 ---
 
-**Next Module:** [Setting Up Linux and Docker](./Module2_Setting_Up_Linux_and_Docker.md)
