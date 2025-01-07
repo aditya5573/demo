@@ -316,159 +316,9 @@
 
 
 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Portal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        .header {
-            background-color: #b71c1c;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            background-color: #f4f4f4;
-            padding: 10px;
-            width: 250px;
-            overflow-y: auto;
-            resize: horizontal;
-            border-right: 1px solid #ccc;
-        }
-
-        .sidebar-item {
-            padding: 8px 10px;
-            margin: 5px 0;
-            background: #e0e0e0;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .sidebar-item:hover {
-            background: #d6d6d6;
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .navigation button {
-            padding: 10px 20px;
-            background-color: #b71c1c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .navigation button:hover {
-            background-color: #a01717;
-        }
-
-        .file-title {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .file-content {
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .sidebar-item.active {
-            background-color: #d32f2f;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Course Portal</h1>
-    </div>
-
-    <div class="container">
-        <div class="sidebar" id="sidebar">
-            <!-- Sidebar items will be dynamically added here -->
-        </div>
-
-        <div class="content" id="content">
-            <!-- Content will be dynamically loaded here -->
-        </div>
-    </div>
-
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-
-        // Example dynamic data
-        const courseData = {
-            "Module1_Introduction_to_Linux_and_Docker.md": "<h2>Module 1: Introduction to Linux and Docker</h2><p>Overview of Linux and Open Source...</p>",
-            "Module2_Setting_Up_Linux_and_Docker.md": "<h2>Module 2: Setting Up Linux and Docker</h2><p>Instructions for setting up Linux...</p>",
-            "Module3_Advanced_Topics.md": "<h2>Module 3: Advanced Topics</h2><p>Details on advanced topics...</p>",
-        };
-
-        // Populate sidebar dynamically
-        for (const [fileName, fileContent] of Object.entries(courseData)) {
-            const sidebarItem = document.createElement('div');
-            sidebarItem.className = 'sidebar-item';
-            sidebarItem.textContent = fileName.replace(/_/g, ' ').replace(/\.md$/, '');
-            sidebarItem.addEventListener('click', () => {
-                document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-                sidebarItem.classList.add('active');
-                content.innerHTML = fileContent;
-            });
-            sidebar.appendChild(sidebarItem);
-        }
-
-        // Default content
-        content.innerHTML = Object.values(courseData)[0];
-        sidebar.firstChild.classList.add('active');
-    </script>
-</body>
-</html>
-
-
-
-
         
 
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -854,7 +704,7 @@
         displayFolders();
     </script>
 </body>
-</html> -->
+</html>
 
 
 
