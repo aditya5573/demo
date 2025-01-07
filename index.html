@@ -91,8 +91,8 @@
             background-color: #f4f4f4;
             padding: 10px;
             overflow-y: auto;
-            border-right: 1px solid #ccc;
-            border-right: 1px solid #ccc;
+            border-right: 0px solid #ccc;
+            border-right: 0px solid #ccc;
             resize: horizontal; /* Allows horizontal resizing */
             overflow: auto; /* Ensures content doesn't overflow */
             min-width: 200px; /* Sets a minimum width */
@@ -118,10 +118,12 @@
 
         .file-list a.active {
             background-color: #e0e0e0;
+            font-weight: bold; //
         }
 
         .file-list a:hover {
             text-decoration: underline;
+            text-decoration: none; //
         }
 
         .main-content {
@@ -132,10 +134,39 @@
 
         .markdown-content {
             background-color: white;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
+            border: 0px solid #ccc;
+            padding: 80px;
+            border-radius: 0px;
             position: relative;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #444;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        ul li {
+            font-size: 16px;
+            margin-bottom: 5px;
         }
 
         pre {
@@ -144,6 +175,7 @@
             background: #f4f4f4;
             border-radius: 5px;
             border: 1px solid #ddd;
+            font-family: monospace;
         }
 
         pre code {
